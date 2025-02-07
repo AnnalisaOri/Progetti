@@ -1,0 +1,47 @@
+close all
+clear
+clc
+
+tspan = [0 200];
+options = odeset('relTol', 1e-8, 'absTol', [1e-8, 1e-8 1e-8])
+
+%x0 = [ 0.008102 0.009525 1.37 1.38];
+%p0 =  [ 1.030 1.46 1.54 1.65 ];
+%z0 =[ 0.2624 0.3113 0.2805 0.42 ];
+
+
+x0 = [0.19011 0.397 1.916 2.90093 .916] 
+p0 =  [0.17012 0.37 1.80152 2.9025 0.78];
+z0 =[0.1400015 0.5 1.5008 2.40012  0.98];
+
+
+for i=1:length(x0)
+    [t,y] = ode45(@(t,y) func2(t,y), tspan, [x0(i) p0(i) z0(i)],'options');
+    plot3(y(:,1), y(:,2), y(:,3),'LineWidth',1.2)
+    hold on
+end
+hold on
+
+
+xlabel('preda condivisa','FontSize',10)
+ylabel('preda IG','FontSize',10)
+zlabel('predatore IG','FontSize',10)
+%xlim([0.1 0.65])
+%ylim([0 2])
+%zlim([0 0.451])
+plot3(0.4,0.6,0,'*','MarkerSize',15)
+plot3(0,0,0,'*','MarkerSize',12)
+plot3(1,0,0,'*','MarkerSize',12)
+
+function res = func2(t, y)
+    s = y(1)*(1-y(1)-y(2)-y(3));
+    i = 5*y(2)*(y(1)-2*y(2)*y(3)/(y(2)^2+(0.1)^2)-0.4);
+    r =4*y(3)*(y(1)+(1*((y(2))^2)/(y(2)^2+(0.1)^2))-1.52);
+ 
+    res = [s;i;r];
+end
+%E1 è instabile
+%E2 per questi valori di parametri esiste perchè esiste sempre ma non è
+%stabil
+%E4 non esiste
+

@@ -1,0 +1,2857 @@
+
+
+\documentclass[12pt,oneside]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper,top=3cm,bottom=3cm,left=3.5cm,right=3.5cm,heightrounded,bindingoffset=5mm}
+\usepackage{pdfpages}
+\usepackage{amsmath}
+\usepackage{empheq}
+\usepackage{setspace}
+\usepackage[italian]{babel}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{biblatex}
+\usepackage{subeqn}
+\usepackage[T1]{fontenc}
+\usepackage[ascii]{inputenc}
+\usepackage{booktabs}
+\usepackage{lipsum}
+%\usepackage{hyperref}
+\usepackage{sidecap}
+\usepackage{caption}
+\usepackage{float}
+%\usepackage{apacite}
+\usepackage{amsthm}
+\usepackage{csquotes}
+\usepackage{todonotes}			
+
+
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\begin{spacing}{1.5}
+\includegraphics[height=7.5cm]{UNIPR_CENTRATO_2RIGHE_POS_CMYK.png}\\
+\vspace{15mm}
+{{\Large{\textsc{DIPARTIMENTO DI SCIENZE MATEMATICHE FISICHE E INFORMATICHE}}}}\\
+{\large{\it Corso di Laurea in Matematica}}
+\end{spacing}
+\end{center}
+\vspace{1mm}
+\begin{center}
+\vspace{1mm}
+%\begin{spacing}{1.5}
+{\large \bf TESI DI LAUREA}\\
+\vspace{10mm}
+{\LARGE{\textsc{\textbf{DINAMICA DI MODELLI DI PREDAZIONE E COMPETIZIONE}}}\\
+
+%\end{spacing}
+\end{center}
+\vspace{17mm}
+\par
+\noindent
+%\begin{spacing}{1.5}
+\begin{minipage}[t]{0.7\textwidth} 
+{\large{\bf Relatrice: \par \vspace{1.5mm} \newline \bf Prof.ssa Maria Groppi}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth} \raggedleft
+{\large{\bf Laureanda: \par \vspace{1.5mm} \newline \bf 
+Annalisa Ori}}
+\end{minipage}
+\begin{minipage}[t]{0.7\textwidth}
+\hfill
+\end{minipage}
+\hfill
+\end{spacing}
+
+\vspace{25mm}
+\begin{center}
+{\large{Anno Accademico 2022/2023 }}
+\end{center}
+\end{titlepage}
+
+
+
+
+
+
+
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{\stretch{1}}
+\begin{flushright}
+\itshape \textit{A mia zia Rita,\\
+come se fossi qui con me,\\
+sperando che la tua resilienza possa rimanere il mio più grande pregio.
+}\\
+
+\end{flushright}
+\vspace{\stretch{2}}
+\cleardoublepage
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+\tableofcontents
+
+\newpage
+\chapter*{Introduzione}
+
+Le comunità di organismi viventi, in ecologia, vengono denominate biocenosi. 
+Precisamente una biocenosi è una comunità di organismi viventi che convivono in uno stesso ambiente, interagendo tramite diversi rapporti come il neutralismo, la competizione e la predazione. 
+Le interazioni tra competizione e predazione possono influenzare notevolmente la coesistenza o l’esclusione delle specie, e quindi la composizione della comunità.\\
+Partendo da un semplice modello preda-predatore di Lotka-Volterra - che modellizza la dinamica di un sistema in cui interagiscono solo due specie animali: una come predatore, l’altra come la sua preda -
+è possibile rappresentare meccanismi di predazione e competizione, mediante un modello denominato ‘intraguild predation' (IGP).
+Si tratta di una particolare combinazione di competizione e predazione, in cui due specie, in relazione tra loro con una dinamica di tipo preda-predatore,  competono anche per una terza preda/risorsa condivisa. 
+Esistono innumerevoli prove dell'importanza dell'IGP in molte comunità naturali, ma sono poche le teorie ecologiche formali che affrontano questa particolare miscela di interazioni.\\
+In questa tesi studieremo gli effetti dell'incorporazione dell'IGP in un modello matematico di tipo preda-predatore, chiariremo dal punto di vista matematico le condizioni di coesistenza delle tre specie considerate e confronteremo le dinamiche previste dal sistema considerato con i risultati ottenuti dallo studio di altri modelli comunitari.\\
+%È fondamentale che il formalismo scelto distingua gli effetti diretti dell'interazione predatore-preda con quelli indiretti della competizione di sfruttamento. Per comodità il predatore principale verrà denominato IG predator, mentre il predatore intermedio lo chiameremo IG prey.\\
+Studieremo qualitativamente il comportamento di due modelli IGP \cite{1}, descritti da sistemi di 3 equazioni differenziali ordinarie. Il primo modello prevede un predatore IG 'specialista', ed è definito in modo tale che la preda IG e la preda condivisa siano le uniche risorse disponibili per il predatore IG. Il secondo prevede un predatore IG 'generalista', ovvero in grado di sopravvivere anche, eventualmente, in assenza delle altre due specie.\\
+Entrambi i modelli presenteranno una risposta funzionale Holling di tipo I (lineare) tra risorsa e predatore IG e tra risorsa e preda IG, mentre tra predatore IG e preda IG ci sarà una risposta funzionale Holling di tipo III.\\
+Confronteremo quindi le nostre conclusioni con i risultati ottenuti da Holt e Polis \cite{2}, che incorporano l'IGP in un semplice modello Lotka-Volterra, con una risposta funzionale Holling di tipo lineare anche tra predatore IG e preda IG.\\
+\newpage
+\noindent
+Nel prossimo capitolo verrà introdotto il modello studiato da Holt e Polis \cite{2}, e riportati i principali risultati da loro ottenuti. Sulla base di questo, successivamente, incorporando la dinamica IGP, verranno presentati i nostri modelli con predatore specialista o generalista. Nel capitolo 3 svilupperemo un'analisi qualitativa dei sistemi ottenuti. Ci focalizzeremo in particolare sulle condizioni di persistenza e estinzione delle specie e simuleremo numericamente alcune dinamiche particolari dei sistemi. Infine, nel capitolo finale confronteremo i risultati con quelli ottenuti da Holt e Polis in \cite{2} e presenteremo alcune conclusioni.
+
+
+
+
+
+\newpage
+\chapter{Il modello di competizione e predazione}\label{modelloholtepolis}
+\section{Il modello di Holt e Polis}
+Il modello di predazione e competizione alla base di questo lavoro di tesi fu proposto da Holt e Polis nel 1997 \cite{2}. Essi incorporarono la dinamica IGP in un semplice modello Lotka-Volterra, secondo le ipotesi che le specie che competono per le risorse, sono impegnate anche in un'interazione diretta preda-predatore. Il predatore si considera specialista, ossia incapace di sopravvivere in assenza delle altre due popolazioni.\\
+Indicando con $P(t),G(t),M(t)$ la biomassa della preda (risorsa) condivisa, della preda IG e del predatore IG, rispettivamente, il loro modello risulta:
+
+\begin{equation}
+\label{eq:sistemaholtepolis} 
+{$
+\begin{cases}
+\dot{P}=   P\left[r_p \left(1-\dfrac{P}{k_p}\right)   -  a_gG - a_mM \right]  \\[10pt] 
+\dot{G}=  G[e_ga_gP- \alpha_m M -  d_g] \\[8pt]        
+\dot{M}=  M[e_ma_mP + \beta\alpha_mG - d_m ] 
+\end{cases}
+$}
+\end{equation}
+
+\vspace{1cm}
+
+\noindent
+dove:
+
+\noindent
+%\begin{table}[H]
+\begin{tabular}{ |p{0.7cm}|p{14cm}|  }
+\hline
+$r_p$ & Tasso di crescita della preda condivisa
+\medskip \\
+$k_p$ & Capacità massima (portante) della preda condivisa, cioè la sua numerosità ottimale
+\medskip \\
+$ a_m $ & Tasso di perdita della risorsa $P$ per predazione $M \longrightarrow P$
+\medskip \\
+$ a_g $ & Tasso di perdita della risorsa $P$ per predazione $G \longrightarrow P$
+\medskip \\
+$ \alpha_m $ & Tasso di perdita della preda $G$ per predazione $M  \longrightarrow G$
+\medskip \\
+$ d_g $ & Tasso di mortalità della preda $G$
+\medskip \\
+$ e_g $ & Efficienza di predazione ($<1$) della preda $G$ nella predazione $G  \longrightarrow P$
+\medskip \\
+$ d_m $ & Tasso di mortalità del predatore $M$ 
+\medskip \\
+$ \beta $ & Efficienza di predazione ($<1$) del predatore $M$ nella predazione $M  \longrightarrow G$
+\medskip \\
+$ e_m $ & Efficienza di predazione ($<1$) del predatore $M$ nella predazione $M  \longrightarrow P$  \\
+\hline
+\end{tabular}
+%\caption{Parametri utilizzati nel sistema (2.1) 
+  %\label{tab:parametri1}
+%\end{table}
+
+\vspace{1cm}
+\noindent
+Mediante un'opportuna adimensionalizzazione, molto simile a quello che vedremo nel dettaglio per i nostri modelli, Holt e Polis semplificarono il sistema \eqref{eq:sistemaholtepolis} come segue: 
+\begin{equation}
+    \label{eq:holtepolisridimensionato}
+\left{$
+\begin{cases}
+\dot{x}=   x(1-x-y-z) \\[8pt]
+\dot{y}=   \gamma_1y(x-a_1z-d_1) \\[8pt]
+\dot{z}=    \gamma_2z(x+a_2y-d_2)\\
+\end{cases}
+$}
+\end{equation}
+
+\vspace{1.5cm}
+\noindent
+con:\\
+
+\noindent
+ \begin{tabular}{llll}
+$x=\dfrac{P}{k_p}$ & $y=\dfrac{a_gG}{r_p}$ & $z=\dfrac{a_mM}{r_p}$ & $\tau=r_pt$ \medskip \\
+$a_1=\dfrac{\alpha_m r_p}{e_gk_pa_ma_g}$ & $a_2=\dfrac{\alpha_m \beta r_p}{k_pa_ma_ge_m}$ &  &  \medskip \\
+$\gamma_1=\dfrac{e_ga_gk_p}{r_p}$ & $\gamma_2=\dfrac{e_ma_mk_p}{r_p}$ & $d_1=\dfrac{d_g}{e_ga_gk_p}$ & $d_2=\dfrac{d_m}{e_ma_mk_p}$
+\end{tabular} \\
+
+\newpage
+\noindent
+Annullando le componenti del campo vettoriale associato al sistema \eqref{eq:holtepolisridimensionato}, si trovano i seguenti possibili equilibri:\\
+
+\begin{itemize}
+    \item $E_0=(0,0,0)$, che rappresenta l'estinzione di tutte le specie
+    \item $E_x=(1,0,0)$, in cui la preda condivisa è presente alla sua capacità portante
+    \item $E_{x,y}=(d_1,1-d_1,0)$, che rappresenta l'estinzione del predatore IG
+    \item $E_{x,z}=(d_2,0,1-d_2)$, che rappresenta l'estinzione della preda IG
+    \item $E_{x,y,z}=\left(\dfrac{-a_1d_2+d_1a_2+a_2a_1}{a_1a_2+a_2-a_1},\dfrac{d_2+d_2a_1-d_1a_1}{a_1a_2+a_2-a_1},\dfrac{a_2(1-d_1)-d_2+d_1}{a_2+a_2a_1-a_1}\right)$,\\
+che rappresenta la coesistenza delle tre popolazioni.
+\end{itemize}\\
+
+\vspace{0.7cm}
+\noindent
+Holt e Polis, in \cite{2}, studiarono la stabilità degli equilibri, la possibilità di attrattori multipli,  criteri generali per la coesistenza delle tre popolazioni ed evidenziarono la maggior propensione verso l'instabilità delle dinamiche del sistema rispetto allo stesso sistema senza IGP.\\
+\noindent
+In particolare dimostrarono che gli unici possibili attrattori multipli sono gli equilibri localmente stabili $E_{x,y}$ e $E_{x,z}$, dunque due equilibri di bordo, ed evidenziarono che le condizioni per l'esistenza di un attrattore interno, di coesistenza, sono le stesse che garantiscono la permanenza del sistema. \\
+Conclusero inoltre che, per avere coesistenza, la preda IG ($y$) debba essere superiore al predatore IG ($z$)  nel competere per la risorsa condivisa ($x$).\\
+Osserviamo anche che questo risultato si trova in accordo alla regola $R^*$ formulata dall'ecologista americano David Tilman \cite{7}, secondo cui, tra le popolazioni concorrenti, quella superiore nello sfruttamento è tale da persistere al livello di equilibrio più basso della preda condivisa. 
+
+
+\newpage 
+\section{I modelli IGP}
+Sulla base del modello IGP proposto in \cite{2}, deriviamo due modelli IGP, in cui uno considera un predatore specialista, la cui sopravvivenza dipende solo dalla predazione sulle altre due specie, mentre il secondo considera un predatore generalista, che può sopravvivere anche grazie a risorse esterne.\\
+Inoltre, ricordiamo che le tre specie $P,M$ e $G$, soddisfano le seguenti condizioni: 
+
+\begin{itemize}
+    \item In assenza di $G$ e $M$, la crescita della risorsa condivisa $P$ segue la legge logistica.
+    \item Nel caso in cui il predatore principale $M$ sia generalista, in assenza di $P$ e $G$, la sua crescita segue la legge logistica.
+    \item Il predatore $M$ si ciba sia della risorsa $P$ che della preda $G$, mentre $G$ può sopravvivere solo grazie alla predazione sulla risorsa $P$.
+    \item $G$ si nutre della risorsa $P$, e anche il predatore $M$ si nutre della risorsa $P$, seguendo una risposta funzionale Holling di tipo I, dunque lineare.
+    \item Il predatore principale $M$ si nutre della preda $G$ seguendo una risposta funzionale Holling di tipo III.
+\end{itemize}
+
+
+\vspace{1cm}
+\noindent
+La dinamica di popolazioni nel caso di predatore specialista, in accordo con le ipotesi sopra illustrate, può essere modellizzata mediante le seguenti tre equazioni differenziali ordinarie \cite{1}. 
+
+\begin{equation}
+    \label{eq:predatorespecialista}
+    {$
+\begin{cases}
+\dot{P}=   P\left[r_p \left(1-\dfrac{P}{k_p}\right)   -  a_gG - a_mM \right]  \\[10pt]
+\dot{G}=  G\left[e_ga_gP- \dfrac{aMG}{G^2+b^2} - d_g\right] \\[10pt]
+\dot{M}= M\left[e_ma_mP+ \dfrac{e_maG^2}{G^2+b^2} -  d_m\right] \\
+\end{cases}
+$}
+\end{equation}
+\\
+
+
+\newpage
+\noindent
+La dinamica delle tre popolazioni nel caso in cui il predatore $M$ sia generalista è descritta dal sistema 
+
+\begin{equation}
+    \label{eq:predatoregeneralista}
+    {$
+\begin{cases}
+\dot{P}=   P\left[r_p \left(1-\dfrac{P}{k_p}\right)  -  a_gG - a_mM \right]  \\[10pt]
+\dot{G}=  G\left[e_ga_gP- \dfrac{aMG}{G^2+b^2} -  d_g\right] \\[10pt]
+\dot{M}=  M\left[r_m \left(1-\dfrac{M}{k_m}\right) + e_ma_mP + \dfrac{e_maG^2}{G^2+b^2} \right] \\
+\end{cases}
+$}
+\end{equation}
+
+\vspace{2.5cm}
+\noindent
+I parametri sono sintetizzati nella seguente tabella:\\
+
+\vspace{0.5cm}
+\noindent
+%\begin{table}
+\begin{tabular}{ |p{0.7cm}|p{13cm}|  }
+
+\hline
+$r_p$ & Tasso di crescita della preda condivisa
+\medskip \\
+$r_m$ & Tasso di crescita del predatore IG
+\medskip \\
+$k_p$ & Capacità massima (portante) della preda condivisa, cioè la sua numerosità ottimale
+\medskip \\
+$k_m$ & Capacità massima (portante) del predatore $M$
+\medskip \\
+$ a_m $ & Tasso di perdita della risorsa $P$ per predazione $M \longrightarrow$ P
+\medskip \\
+$ a_g $ & Tasso di perdita della risorsa $P$ per predazione $G  \longrightarrow P$
+\medskip \\
+$ a$ & Numero massimo di prede $G$ uccise dal predatore $M$ 
+\medskip \\
+$b$ & Densità della preda $G$ quando il numero delle prede uccise da $M$ ha raggiunto la metà del suo massimo (costante di semisaturazione)
+\medskip \\
+$ d_g $ & Tasso di mortalità della preda $G$ 
+\medskip \\
+$ e_g $ & Efficienza di predazione ($<1$) della preda $G$ nella predazione $G  \longrightarrow P$
+\medskip \\
+$ d_m $ & Tasso di mortalità del predatore $M$
+\medskip \\
+$ e_m $ & Efficienza di predazione ($<1$) del predatore $M$ nella predazione $M  \longrightarrow G$, e nella predazione  $ M \longrightarrow P$\\
+\hline
+\end{tabular}
+%\caption{Parametri utilizzati nei sistemi (2.3) e (2.4)}
+ %\label{tab:parametri2}
+%\end{table}
+
+
+\vspace{2cm}
+\noindent
+Osserviamo che l'unica differenza tra i due sistemi risiede nel termine di crescita logistica del predatore IG in assenza di preda e risorsa, che è presente nel caso di predatore generalista e non compare invece nel caso di predatore specialistico, dove è sostituito da una mortalità malthusiana.
+Assumendo che tutti i parametri che appaiono nei sistemi siano strettamente positivi, posso effettuare una adimensionalizzazione allo scopo di ridurne il numero. Pongo: \\
+
+ \begin{tabular}{llll}
+$x=\dfrac{P}{k_p}$ & $y=\dfrac{a_gG}{r_p}$ & $z=\dfrac{a_mM}{r_p}$ & $\tau=r_pt$ \medskip \\
+$a_1=\dfrac{a}{e_gk_pa_m}$ & $a_2=\dfrac{a}{k_pa_m}$ & $a_3=\dfrac{r_m}{e_ma_mk_p}$ & $a_4=\dfrac{r_pr_m}{k_m(a_m)^2e_mk_p}$ \medskip\\
+$\gamma_1=\dfrac{e_ga_gk_p}{r_p}$ & $\gamma_2=\dfrac{e_ma_mk_p}{r_p}$ & $d_1=\dfrac{d_g}{e_ga_gk_p}$ & $d_2=\dfrac{d_m}{e_ma_mk_p}$
+\end{tabular} \\
+
+\vspace{2cm}
+\noindent
+\begin{itemize}
+\item[*] Poiché \begin{equation}
+\label{eq:eq3} 
+P=P(t), \tau=r_pt   \   \longrightarrow \  
+\dfrac{dP}{dt} = \dfrac{dP}{d\tau} \dfrac{d\tau}{dt} =  k_p r_p \dfrac{dx}{d\tau} 
+\end{equation} 
+
+ Sostituendo l'espressione di $x$, $y$ e $z$ nella prima equazione di (2.1) e di (2.2), ottengo:
+\begin{equation}
+\label{eqref:eq4}
+\dfrac{dP}{dt} = x k_p  [r_p(1-x)-r_py-r_pz]
+\end{equation}
+
+ed eguagliando infine le due espressioni \eqref{eq:eq3} e \eqref{eqref:eq4} : 
+
+\begin{center}
+$
+\dot{x} = \dfrac{dx}{d\tau} = x(1-x-y-z) 
+$
+\end{center}
+
+\vspace{1cm}
+\noindent
+\item[*] Analogamente, poichè \begin{equation}
+\label{eq:eq5} 
+G=G(t), \tau=r_pt  \   \longrightarrow \   \dfrac{dG}{dt} = \dfrac{dG}{d\tau} \dfrac{d\tau}{dt} = \dfrac{r_p^2}{a_g} \dfrac{dy}{d\tau}  \\
+\end{equation}
+
+\noindent
+Sostituendo l'espressione di $x$, $y$ e $z$, e l'espressione dei parametri $\gamma_1, a_1, \beta $ e $  d_1 $ nella seconda equazione di (2.1) e (2.2), ottengo:
+\begin{equation}
+\label{eqref:eq6}
+\dfrac{dG}{dt}=  \gamma_1 y \dfrac{r_p^2}{a_g} \left(x -\dfrac{a_1yz}{y^2+\beta^2} -  d_1\right)
+\end{equation}
+
+ed eguagliando infine le due espressioni \eqref{eq:eq5} e \eqref{eqref:eq6}: 
+\begin{center}
+$\dot{y}= \gamma_1 y \left(x- \dfrac{a_1yz}{y^2+\beta^2} - d_1\right) $
+\end{center}
+
+\vspace*{1cm}
+\noindent
+\item[*] Per la terza equazione del sistema (2.1) poichè \begin{equation}
+\label{eq:eq7} 
+M=M(t), \tau=r_pt     \longrightarrow 
+\dfrac{dM}{dt} = \dfrac{dM}{d\tau} \dfrac{d\tau}{dt} = \dfrac{r_p^2}{a_m} \dfrac{dz}{d\tau}  \\
+\end{equation}
+
+\noindent
+Sostituendo l'espressione di $x$, $y$ e $z$, e l'espressione dei parametri $\gamma_2, a_2, \beta$  e $  d_2 $ nella terza equazione, ottengo: 
+
+\begin{equation}
+\label{eq:eq8}
+\dfrac{dM}{dt}=  \gamma_2 z \dfrac{r_p^2}{a_m} \left(x +\dfrac{a_2y^2}{y^2+\beta^2} - d_2\right) \\
+\end{equation}
+
+\noindent
+ed eguagliando infine le due espressioni \eqref{eq:eq7} e \eqref{eq:eq8}: 
+\begin{center}
+$\dot{z}= \gamma_2 z \left(x+ \dfrac{a_2y^2}{y^2+\beta^2} - d_2\right) $
+\end{center}
+
+\noindent 
+\item[*] Infine, per la terza equazione del sistema (2.2): 
+procedendo analogamente, e sostituendo l'espressione di $x$, $y$, $z$, $\gamma_2, a_2, \beta,  d_2 $,  e inoltre $a_3$ e $a_4$ nella terza equazione, in modo da ottenere:
+\begin{equation}
+\label{eq:eq9}
+\dfrac{dM}{dt}=  \gamma_2 z \dfrac{r_p^2}{a_m}  \left(a_3  -a_4 z+x+ \dfrac{a_2y^2}{y^2+\beta^2} \right) 
+\end{equation}
+
+\noindent
+ed eguagliando infine le due espressioni \eqref{eq:eq7} e \eqref{eq:eq9}, trovo:
+\begin{center}
+$\dot{z}= \gamma_2 z \left(a_3 -a_4 z+x+ \dfrac{a_2y^2}{y^2+\beta^2} \right) $
+\end{center}
+
+\end{itemize}
+\newpage
+\noindent
+A seguito dell'adimensionalizzazione, ottengo dunque i seguenti sistemi.\\
+
+
+\noindent
+{\it a)} Dinamica delle tre popolazioni nel caso di predatore specialista:
+
+\begin{equation}
+\label{eq:sistemaspecialistamio}
+\left{$
+\begin{cases}
+\dot{x}=  x(1-x-y-z)  \\[8pt]
+\dot{y}= \gamma_1 y \left(x- \dfrac{a_1yz}{y^2+\beta^2} - d_1\right) \\[8pt]
+\dot{z}= \gamma_2 z \left(x+ \dfrac{a_2y^2}{y^2+\beta^2} - d_2\right)\\
+\end{cases}
+$}
+\end{equation}
+
+\vspace*{1cm}
+\noindent
+{\it b)} Dinamica delle tre popolazioni nel caso di predatore generalista: 
+
+\begin{equation}
+\label{eq:sistemageneralistamio}
+\left{$
+\begin{cases}
+\dot{x}=  x(1-x-y-z)  \\[8pt]
+\dot{y}=  \gamma_1 y \left(x- \dfrac{a_1yz}{y^2+\beta^2} -  d_1\right) \\[8pt]
+\dot{z}= \gamma_2 z \left(a_3  -a_4 z+x+ \dfrac{a_2y^2}{y^2+\beta^2} \right) \\
+\end{cases}
+$}
+\end{equation}\\
+
+\vspace{1cm}
+\noindent
+Nelle sezioni successive, analizzeremo nel dettaglio le possibili dinamiche dei due sistemi. \\
+Mostreremo condizioni sufficienti di persistenza ed estinzione delle specie in ogni scenario possibile e studieremo i possibili casi di bistabilità con attrattori multipli. Con simulazioni numeriche evidenzieremo i risultati ottenuti. In particolare metteremo in risalto la diversa evoluzione del sistema nel caso del predatore specialista con quella del caso con predatore generalista. \\
+Analizzeremo infine gli effetti della risposta funzionale tra preda-predatore, confrontando i nostri risultati con quelli ottenuti da Holt e Polis in \cite{2}.
+
+\newpage
+\chapter{Analisi qualitativa}
+\section{Proprietà delle soluzioni}
+\subsection[Consistenza del modello]{\underline{Consistenza del modello}}
+
+    
+Innanzitutto andiamo a studiare le proprietà di consistenza dei modelli di competizione e predazione introdotti. Poichè $x,y$ e $z$ rappresentano la densità numerica di prede o predatori, e in quanto tali non potranno mai assumere valori negativi, occorre dimostrare che partendo da valori iniziali positivi o nulli, le soluzioni si manterranno positive o nulle ad ogni istante di tempo successivo considerato.\\
+
+
+\noindent
+\underline{Tesi}:
+$ x(\tau)\ge 0 \ \forall \tau , \  y(\tau) \ge 0 \ \forall \tau , z(\tau)\ge 0 \ \forall \tau $  se  $x(0)\ge 0, \ y(0)\ge 0, \ z(0)\ge 0 .$ \\
+
+
+\noindent
+Poichè %\eqref{eq:sistemaspecialista} e %\eqref{eq:sistemageneralista}
+(1.12) e (1.13)  sono sistemi del tipo:
+$ \dot{\underline{x}}=\underline{F}(\underline{x})$ con $\underline{F}\in C^1(\mathbb{R}^3) \\ $
+\noindent
+dal teorema di esistenza e unicità della soluzione per problemi di Cauchy \cite{6}, so che $ \exists!$ la soluzione, per ciascuno di essi. 
+Dunque nei rispettivi ritratti di fase le traiettorie non potranno intersecarsi. Inoltre si ha che:
+
+
+
+\begin{itemize}
+    \item \underline{l'asse $z$ è traiettoria} \\
+    Ponendo infatti $x=y=0$, ottengo $\dot{x}=\dot{y}=0 \longrightarrow x=0$ e $y=0 $ sono soluzioni costanti  $\longrightarrow $ 
+       \begin{itemize}
+           \item Nel primo caso (1.12), l'asse $z$ viene percorso con legge: \\$\dot{z}=\gamma_2z(-d_2)  $
+        \item Nel secondo caso (1.13), l'asse $z$ sarà percorso con legge:\\
+           $\dot{z}=\gamma_2z(a_3-a_4z)$
+        \end{itemize}
+
+
+      \item \underline{l'asse $x$ è traiettoria} \\
+       Ponendo $y=z=0$, ottengo $\dot{y}=\dot{z}=0 \longrightarrow y=0$ e $z=0$ sono soluzioni costanti  $\longrightarrow$ in entrambi i casi (1.12) e (1.13) l'asse $x$ viene percorso con legge: $\dot{x}=x(1-x)$
+       
+        \item \underline{l'asse $y$ è traiettoria} \\
+       Ponendo $x=z=0$, ottengo $\dot{x}=\dot{z}=0 \longrightarrow x=0$ e $z=0$ sono soluzioni costanti  $\longrightarrow $ in entrambi i casi (1.12) e (1.13) l'asse $y$ viene percorso con legge: $\dot{y}=\gamma_1y(1-d_1)  $
+    
+\end{itemize}\\
+
+
+\noindent
+Dunque in quanto traiettorie, gli assi non potranno essere attraversati. Il primo ottante di $ \mathbb{R}^3 $ risulta, così, invariante.
+
+
+\vspace{1cm}
+
+
+\subsection[Limitatezza]{\underline{Limitatezza}}
+\begin{{singlespace}}
+Mostro che le soluzioni dei sistemi (1.12) e (1.13) - sono limitate in  $\mathbb{R}^3_+$ . 
+
+\vspace{0.5cm}
+\noindent
+È possibile dimostrare che:\\
+
+\noindent
+$\limsup_{\tau \to \infty} x(\tau)\leq1  $   e $ 
+\dfrac{a_3}{a_4}\leq \liminf_{\tau \to \infty} z(\tau)\leq \limsup_{\tau \to \infty} z(\tau) \leq \dfrac{1+a_2+a_3}{a_4}$ 
+
+\vspace{0.5cm}
+\noindent
+\begin{itemize}
+ \item Dalla positività delle soluzioni posso dedurre: \\ 
+  $\dot{x}=x(1-x-y-z) \leq x(1-x) $.\\
+ 
+\noindent
+ Applicando il teorema del confronto per problemi di Cauchy \cite{6},\\ ottengo:
+ $\limsup_{\tau \to \infty} x(\tau)\leq1.$ \\
+
+ \noindent
+ $\Longrightarrow $ la specie $x$ è limitata (per entrambi i sistemi). 
+
+\vspace{0.5cm}
+\noindent 
+\item Analogamente, \\
+$ \dot{z}= \gamma_2 z \left(a_3  -a_4 z+x+ \dfrac{a_2y^2}{y^2+\beta^2} \right)  \geq \gamma_2z(a_3-a_4z) \longrightarrow \\
+\liminf_{\tau \to \infty} z(\tau) \geq \dfrac{a_3}{a_4} $\\
+
+\noindent
+Nello stesso tempo, poichè $ \dfrac{y^2}{y^2+\beta^2} \leq 1 \longrightarrow$ \\
+
+$ \dot{z}=\gamma_2 z\left(a_3 -a_4 z+x+ \dfrac{a_2y^2}{y^2+\beta^2} \right)  \leq \gamma_2z(a_3-a_4z+1+a_2) \longrightarrow $\\
+
+\noindent
+$\limsup_{\tau \to \infty} z(\tau) \leq \dfrac{a_3+1+a_2}{a_4} $\\
+
+\noindent
+$\Longrightarrow$ la specie $z$ è limitata per il sistema (1.13). 
+
+\vspace{0.5cm}
+\noindent
+\item Definendo $v=x+\theta_1y+\theta_2z$ con 
+$
+\begin{cases}
+\ 1-\gamma_1\theta_1>0  \\
+\ 1-\gamma_2\theta_2>0  \\
+\ a_1\gamma_1\theta_1> a_2\gamma_2\theta_2 \\
+\end{cases}
+$ \\
+
+\noindent
+trovo: \\
+$v'=x'+\theta_1y'+\theta_2z' \leq x-x^2 -\gamma_1\theta_1d_1y-\gamma_2\theta_2d_2z \leq $\\
+$\leq (min[\gamma_1d_1, \gamma_2d_2]+1)x - (min[\gamma_1d_1, \gamma_2d_2])v $\\
+
+\noindent
+Poichè $  \limsup_{\tau \to \infty} x(\tau)\leq1 \longrightarrow
+ \forall \epsilon>0 \ \exists \ \tau_0>0: \forall \tau>\tau_0$ valga: $ x(\tau)<1+\epsilon $ \\
+
+\noindent
+dunque $\forall \tau>\tau_0 $ si ha: $ v'<(min[\gamma_1d_1, \gamma_2d_2]+1)(1+\epsilon) - (min[\gamma_1d_1, \gamma_2d_2])v$ \\
+
+\noindent
+$\longrightarrow \limsup_{\tau \to \infty} v(\tau) \leq \dfrac{min[\gamma_1d_1, \gamma_2d_2]+1}{min[\gamma_1d_1, \gamma_2d_2]} $ \\
+
+\noindent
+Per come è definita $v$, posso concludere che anche le specie $y$ e $z$ sono limitate per il sistema (1.12).\\
+
+Quindi il sistema (1.12) è limitato in $\mathbb{R}^3_+$.
+
+\vspace{0.5cm}
+\noindent
+\item Per il sistema (1.13) mi resta da mostrare che la specie $y$ è limitata.\\
+
+\noindent
+Definendo $ v=\gamma_1x+y \longrightarrow v'=\gamma_1x'+y' \leq $ \\ $ \leq \gamma_1(x-d_1y) \leq \gamma_1(1+\gamma_1d_1-d_1v)$ \\
+
+$\longrightarrow \limsup_{\tau \to \infty} v(\tau) \leq \dfrac{1+d_1\gamma_1}{d_1} \longrightarrow \limsup_{\tau \to \infty} y(\tau) \leq \dfrac{1+d_1\gamma_1}{d_1}$. \\
+
+\noindent
+Anche il sistema (1.13) è limitato in $\mathbb{R}^3_+$.
+
+\end{itemize}
+
+\vspace{1cm}
+\noindent
+Le proprietà di limitatezza, mostrate in questo paragrafo, ci consentiranno di ottenere condizioni sufficienti per la persistenza e l'estinzione delle specie nelle sezioni successive.
+
+\newpage
+\section{Equilibri di non coesistenza}
+
+I punti di equilibrio sono tutti e soli i punti che annullano il campo vettoriale $\underline{f}$ associato al sistema.
+Per ora mi occupo di studiare la stabilità degli equilibri al contorno di non coesistenza, ovvero quelli che hanno almeno una, tra le tre componenti, nulla. \\
+
+\noindent
+Per il sistema (1.12), con predatore specialista, il campo vettoriale risulta:
+\vspace{0.5cm}
+
+$
+\begin{cases}
+\left 
+
+\ f_1=  x(1-x-y-z)  \\[8pt]
+
+\ f_2=  \gamma_1 y \left(x- \dfrac{a_1yz}{y^2+\beta^2}  -  d_1\right) \\[8pt]
+
+\ f_3= \gamma_2 z \left(x+ \dfrac{a_2y^2}{y^2+\beta^2}  - d_2\right) \\
+
+\end{cases}
+$ \\ \\
+
+\noindent
+Annullando le componenti trovo:
+
+\vspace{0.5cm}
+\noindent
+$f_1 = 0 \iff x = 0$   \ oppure \ $x+y+z=1$\\
+
+\noindent
+$f_2 = 0 \iff y = 0 $  \ oppure \ $x=d_1+\dfrac{a_1yz}{y^2+\beta^2}$} \\
+
+\noindent
+$f_3 = 0 \iff z = 0$   \ oppure \ $x=d_2-\dfrac{a_2y^2}{y^2+\beta^2}$} 
+
+\vspace{0.5cm}
+\noindent
+ottengo allora i seguenti possibili equilibri di non coesistenza per il sistema (1.12):
+
+\vspace{0.5cm}
+\begin{itemize}
+    \item $ E_1=(0,0,0) $
+\item $ E_2=(1,0,0) $
+\item $E_3=(d_1,1-d_1,0), $ che è ammissibile nel primo ottante solo quando $d_1<1$
+\item $E_4=(d_2,0,1-d_2), $ che è ammissibile nel primo ottante solo quando $d_2<1$ 
+\end{itemize}
+
+\newpage
+\noindent
+Per il sistema (1.13) con predatore generalista, il campo vettoriale risulta:
+
+\vspace{0.5cm}
+$
+\begin{cases}    
+\left 
+f_1=  x(1-x-y-z)  \\[8pt]
+f_2=  \gamma_1 y \left(x- \dfrac{a_1yz}{y^2+\beta^2} -  d_1\right) \\[8pt]
+f_3= \gamma_2 z \left(a_3  -a_4 z+x + \dfrac{a_2y^2}{y^2+\beta^2} \right) \\ 
+\end{cases}
+$ \\ \\
+
+\noindent
+Annullando le componenti del campo, trovo:
+
+\vspace{0.5cm}
+\noindent
+$f_1 = 0 \iff x = 0 $  \ oppure \ $x+y+z=1$\\
+
+\noindent
+$f_2 = 0 \iff y = 0$   \ oppure \ $x=d_1+\dfrac{a_1yz}{y^2+\beta^2}$\\
+
+\noindent
+$f_3 = 0 \iff z = 0$   \ oppure \ $x=a_4z-a_3-\dfrac{a_2y^2}{y^2+\beta^2}$
+
+\vspace{0.5cm}
+\noindent
+ottengo allora i seguenti possibili equilibri di non coesistenza per il sistema (1.13):
+
+\vspace{0.5cm}
+\begin{itemize}
+\item $E_1=(0,0,0) $
+\item $E_2=(1,0,0) $
+\item $E_3=(d_1,1-d_1,0)$, che è ammissibile nel primo ottante solo quando $d_1<1$ 
+\item $E_4=\left(\dfrac{a_4-a_3}{1+a_4},0,\dfrac{1+a_3}{1+a_4}\right)$, che è ammissibile nel primo ottante solo quando $a_4>a_3$
+\item $ E_5=\left(0,0,\dfrac{a_3}{a_4}\right)$
+
+\end{itemize}
+ 
+\newpage
+\subsection[Stabilità]{\underline{Stabilità}}
+Per valutare la stabilità di ciascun equilibrio di non coesistenza, utilizzo il primo metodo di linearizzazione di Liapunov \cite{4}. \\
+Determino la matrice jacobiana del campo vettoriale $\underline{f}$ associato al sistema.
+\breakline
+\\
+
+\noindent
+Per il sistema (1.12) con predatore specialista, trovo: \\
+\begin{equation}
+\nonumber
+J(x,y,z)=
+\renewcommand{\arraystretch}{2}
+\begin{pmatrix}
+&1-2x-y-z \    &-x \ &-x  \\[2pt]
+&\gamma_1y \ &\gamma_1\left(x-d_1-\dfrac{2a_1zy\beta^2}{y^2+\beta^2}\right) \ &-\dfrac{\gamma_1a_1y^2}{y^2+\beta^2} \\[2pt]
+&\gamma_2z \ &\dfrac{2a_2\gamma_2z\beta^2y}{(y^2+\beta^2)^2} \ &\gamma_2\left(x-d_2+\dfrac{a_2y^2}{y^2+\beta^2}\right)\\
+\end{pmatrix} 
+\end{equation}\\
+
+\noindent
+\begin{itemize}
+    \item Lo jacobiano valutato in $ E_{1}=(0,0,0) $ risulta:
+\\
+
+$J(0,0,0)=   \begin{pmatrix}
+1 & 0 & 0 \\
+0 & -\gamma_1d_1 & 0 \\
+0 & 0 & -\gamma_2d_2 \\
+\end{pmatrix} $    \\
+
+ed è una matrice diagonale con autovalori \\ 
+$1>0 \quad -\gamma_1d_1<0\quad$ e $\quad -\gamma_2d_2<0$ 
+
+dunque dal I Teorema di Liapunov, \\
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(0,0,0)\} >0$, \\ 
+quindi $ E_1 $ risulta sempre instabile ed è localmente un punto sella.
+\end{itemize}
+\begin{itemize}
+
+\vspace{0.8cm}
+    \item   Lo jacobiano valutato in $ E_{2}=(1,0,0) $ risulta:
+\\
+
+$J(1,0,0)=   \begin{pmatrix}
+-1 & -1 & -1 \\
+0 & -\gamma_1(1-d_1) & 0 \\
+0 & 0 & -\gamma_2(1-d_2) \\
+\end{pmatrix} $  \\
+
+ed è una matrice triangolare superiore con autovalori \\ 
+$-1<0, \quad -\gamma_1(1-d_1)<0 \iff d_1>1 \quad$ e \\ $ \quad -\gamma_2(1-d_2)<0  \iff d_2>1  $
+
+dunque dal I Teorema di Liapunov, \\
+$ E_2 $ risulta localmente asintoticamente stabile (nodo localmente) $\iff d_1>1$ e $d_2>1$.\\
+$ E_2 $ risulta instabile (sella o nodo) $\iff d_1<1$ oppure $d_2<1$.
+\end{itemize}
+
+\vspace{0.8cm}
+\begin{itemize}
+\item Lo jacobiano valutato in $ E_{3}=(d_1,1-d_1,0) $, ammissibile nel primo ottante solo se $d_1<1$, risulta:\\ 
+
+$J(d_1,1-d_1,0)$=  \renewcommand{\arraystretch}{2}$ \begin{pmatrix}
+-d_1 & -d_1 & -d_1 \\[2pt]
+\gamma_1(1-d_1) & 0 & \dfrac{-\gamma_1(1-d_1)^2a_1}{(1-d_1)^2+\beta^2} \\[2pt]
+0 & 0 & \gamma_2(d_1-d_2)+\dfrac{\gamma_2a_2(1-d_1)^2}{(1-d_1)^2+\beta^2} \\
+\end{pmatrix} $    \\
+
+Calcolando il determinante di $J(d_1,1-d_1,0)-\lambda I$ sviluppando rispetto la terza riga trovo che $j_{33}$ è uno degli autovalori della matrice jacobiana e risulta: \\
+
+$\gamma_2(d_1-d_2)+\dfrac{\gamma_2a_2(1-d_1)^2}{(1-d_1)^2+\beta^2} < 0 \iff d_2>d_1+\dfrac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}$\\
+
+\vspace{0.5cm}
+\noindent
+Gli altri due autovalori sono dati dal minore $J_{33}$= \renewcommand{\arraystretch}{2}$ \begin{pmatrix}
+-d_1 & -d_1 \\[2pt]
+\gamma_1(1-d_1) & 0 \\
+\end{pmatrix} $    \\
+
+Ne calcolo traccia e determinante:
+
+$Tr(J_{33})=-d_1<0$\\
+
+$Det(J_{33})=d_1\gamma_1(1-d_1)>0 \iff d_1<1$\\
+
+allora, dal criterio di Routh-Hurwitz per matrici di dimensione 2, trovo che se $d_1<1$, gli altri due autovalori di $J(d_1,1-d_1,0)$ hanno parte reale negativa. \\
+
+\noindent
+Dal I Teorema di Liapunov,  $ E_3 $ risulta localmente asintoticamente \\ stabile $\iff d_1<1$ e $d_2>d_1+\dfrac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}} $\\
+
+
+%$ E_3 $ risulta instabile $\iff d_1<1$ e $d_2<d_1+\frac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}} $
+
+\end{itemize}
+
+\vspace{0.8cm}
+\begin{itemize}
+    \item Lo jacobiano valutato in $ E_{4}=(d_2,0,1-d_2) $, ammissibile nel primo ottante solo se $d_2<1$, risulta: \\
+
+$J(d_2,0,1-d_2)$=  \renewcommand{\arraystretch}{1}$ \begin{pmatrix}
+-d_2 & -d_2 & -d_2 \\
+0 & \gamma_1(d_2-d_1)& 0 \\
+\gamma_2(1-d_2) & 0 & 0 \\
+\end{pmatrix} $  \\  
+
+Calcolando il determinante di $J(d_2,0,1-d_2)- \lambda I$ sviluppando rispetto la seconda riga trovo che $j_{22}$ è un autovalore e risulta:\\
+
+$j_{22}=\gamma_1(d_2-d_1)<0 \iff d_1>d_2$\\
+
+Gli altri due autovalori sono dati dal minore $J_{22}=\begin{pmatrix}
+-d_2 &  -d_2 \\
+\gamma_2(1-d_2) & 0 \\
+\end{pmatrix} $ 
+
+Ne calcolo traccia e determinante:\\
+
+$Tr(J_{22})=-d_2<0$\\
+
+$Det(J_{22})=d_2\gamma_2(1-d_2)>0 \iff d_2<1$\\
+
+allora, dal criterio di Routh-Hurwitz per matrici di dimensione 2, trovo che se $d_2<1$, gli altri due autovalori di $J(d_2,0,1-d_2)$ hanno parte reale negativa.\\
+
+\noindent
+Dal I Teorema di Liapunov, $ E_4 $ risulta localmente asintoticamente stabile $\iff d_2<1$ e $d_2<d_1$\
+
+
+
+
+%Poichè, la matrice non è diagonale o triangolare, per studiare il segno della parte reale dei suoi autovalori utilizzo il criterio di Routh-Hurwitz per matrici di dimensione 3.  
+
+%\newtheorem{theorem}{Teorema}[section]
+%\begin{theorem}\label{thm:routhhurwitz3}
+    %Condizione necessaria e sufficiente affinchè una %matrice A di dimensione 3 abbia autovalori tutti con parte reale negativa è:\\
+
+    
+%$
+%\begin{cases}    
+%\left 
+%tr(A)<0\\[3pt]
+%det(A)<0\\[3pt]
+%Det(A)-Tr(A) \cdot \sum\limits_{i=1}^3A_{i,i}>0  \\ 
+%\end{cases}
+%$ \\
+
+%\noindent
+%dove $A_{i,i}$ indica il minore principale di A ottenuto togliendo la i-esima riga e la i-esima colonna, $i=1...3$.
+%\end{theorem}\\
+
+%Calcolo i minori principali della matrice:
+%\begin{itemize}
+%    \item[$\bullet$] $J_{1,1}=0$
+%    \item[$\bullet$] $J_{2,2}=d_2\gamma_2(1-d_2)$   
+%    \item[$\bullet$] $J_{3,3}=-d_2\gamma_1(d_2-d_1) $
+%\end{itemize} 
+
+\vspace{0.6cm}
+%Calcolo il determinante della matrice:\\
+
+%$Det(J)=\gamma_2(1-d_2)\gamma_1d_2(d_2-d_1) $\\
+
+%\noindent
+%allora, supponendo $d_2<1$, 
+%\begin{equation}
+%\label{detE4}
+%Det(J)<0 \iff d_2<d_1  \\
+%\end{equation}
+
+%\vspace{0.7cm}
+%Calcolo la traccia della matrice:    $Tr(J)=-%d_2+\gamma_1(d_2-d_1) $\\
+
+%Allora supponendo valga \eqref{detE4}, trovo che $Tr(J)<0 $. \\
+
+\vspace{0.4cm}
+%Assumendo le stesse condizioni si può dimostrare che:\\
+
+%$Det(J)-Tr(J) \cdot \sum\limits_{i=1}^3J_{i,i}= \\ \gamma_2(1-d_2)\gamma_1d_2(d_2-d_1)+ 
+%\left[d_2-\gamma_1(d_2-d_1)\right]\left[d_2\gamma_2(1-%d_2)-d_2\gamma_1(d_2-d_1)\right]= \\
+%(d_2)^2\gamma_2(1-d_2)-(d_2)^2\gamma_1(d_2-d_1)+d_2(\gamma_1)^2(d_2-d_1)^2= \\ (d_2)^2\gamma_2(1-d_2)+(d_2)^2\gamma_1(d_1-d_2)+d_2(\gamma_1)^2(d_2-d_1)^2>0 $\\
+
+%\vspace{0.5cm}
+
+
+\end{itemize}
+\vspace{3cm}
+\noindent
+Per il sistema (1.13) con predatore generalista, trovo: \\
+\begin{equation}
+\nonumber
+J(x,y,z)
+= \renewcommand{\arraystretch}{2}
+\begin{pmatrix}
+&1-2x-y-z \    &-x \ &-x  \\[2pt]
+&\gamma_1y \ &\gamma_1\left(x-d_1-\dfrac{2a_1zy\beta^2}{y^2+\beta^2}\right) \ &-\dfrac{\gamma_1a_1y^2}{y^2+\beta^2} \\[2pt]
+&\gamma_2z \ &\dfrac{2a_2\gamma_2z\beta^2y}{\left(y^2+\beta^2\right)^2} \ &  \gamma_2\left(a_3-2a_4z+x+\dfrac{a_2y^2}{y^2+\beta^2}\right)
+\end{pmatrix} \\
+
+\end{equation}
+
+\noindent
+\begin{itemize}
+    \item Lo jacobiano valutato in $ E_{1}=(0,0,0) $ risulta:
+\\
+
+$J(0,0,0)=   \begin{pmatrix}
+1 & 0 & 0 \\
+0 & -\gamma_1d_1 & 0 \\
+0 & 0 & \gamma_2a_3 \\
+\end{pmatrix} $   \\
+
+ed è una matrice diagonale con autovalori \\ 
+$1>0, \quad -\gamma_1d_1<0 \quad$ e $\quad \gamma_2a_3>0$
+
+
+dunque dal I Teorema di Liapunov, 
+
+
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(0,0,0)\} >0$,  quindi $ E_1 $ risulta sempre instabile ed è localmente un punto sella.
+
+\vspace{0.8cm}
+    \item Lo jacobiano valutato in $ E_{2}=(1,0,0) $ risulta:
+\\
+
+$J(1,0,0)=  \begin{pmatrix}
+-1 & -1 & -1 \\
+0 & \gamma_1(1-d_1) & 0 \\
+0 & 0 & \gamma_2(1+a_3) \\
+\end{pmatrix} $    \\
+
+ed è una matrice triangolare superiore con autovalori \\ $-1<0, \quad \gamma_1(1-d_1) \quad$ e $\quad \gamma_2(1+a_3)>0 $
+
+
+dunque dal I Teorema di Liapunov, 
+
+
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(1,0,0)\} >0 $, quindi $ E_2 $ risulta sempre instabile.
+
+\vspace{0.8cm} 
+ \item Studiamo l'equilibrio $ E_{3}=(d_1,1-d_1,0)$, ammissibile nel primo ottante solo se $d_1<1.$
+\\
+
+$J(d_1,1-d_1,0)$=   \renewcommand{\arraystretch}{2}  \begin{pmatrix}
+-d_1 & -d_1 & -d_1 \\
+\gamma_1(1-d_1) & 0 & -\dfrac{\gamma_1a_1(1-d_1)^2}{(1-d_1)^2+\beta^2}\\
+0 & 0 & \gamma_2\dfrac{a_3+d_1+a_2(1-d_1)^2}{(1-d_1)^2+\beta_2} \\
+\end{pmatrix}  \\
+
+Calcolando il determinante della matrice $J(d_1,1-d_1,0)-\lambda I$ sviluppando rispetto la terza riga trovo che $j_{33}$ è un autovalore e risulta:\\
+
+$j_{33}=\gamma_2\dfrac{a_3+d_1+a_2(1-d_1)^2}{(1-d_1)^2+\beta_2}>0$ \\
+
+
+dunque dal I teorema di Liapunov \\   
+poichè $\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(d_1,1-d_1,0)\} >0$ posso concludere che $ E_{3}$ è sempre un punto di equilibrio instabile.
+
+\newpage
+    \item Lo jacobiano valutato in $ E_{4}=\left(0,0,\dfrac{a_3}{a_4}\right) $ risulta:\\
+
+
+$J\left(0,0,\dfrac{a_3}{a_4}\right)$=  $ \begin{pmatrix}
+1-\dfrac{a_3}{a_4} & 0 & 0 \\[1.5pt]
+0 & -\gamma_1d_1 & 0 \\[1.5pt]
+\gamma_2\dfrac{a_3}{a_4} & 0 & -\gamma_2a_3 \\
+\end{pmatrix} $    
+\\
+
+ed è una matrice triangolare inferiore con autovalori \\
+$1-\dfrac{a_3}{a_4}<0 \iff a_4<a_3, \quad -\gamma_1d_1<0 \quad $ e $-\gamma_2a_3<0 $
+
+\vspace{0.6cm}
+dunque dal I Teorema di Liapunov, \\
+$ E_4 $ risulta localmente asintoticamente stabile $\iff a_3>a_4$.\\
+%$ E_4 $ risulta instabile (sella o nodo) $\iff a_3<a_4$.
+
+
+\vspace{0.8cm}
+    \item Lo jacobiano valutato in $ E_{5}=\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right) $, ammissibile nel primo ottante solo se $a_4>a_3$, risulta:
+\\
+
+$J\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right)$=  \renewcommand{\arraystretch}{2} $ \begin{pmatrix}
+\dfrac{a_3-a_4}{a_4+1}& \dfrac{a_3-a_4}{a_4+1} & \dfrac{a_3-a_4}{a_4+1} \\ \medskip
+0 & \gamma_1\left(\dfrac{a_4-a_3}{a_4+1}-d_1\right) & 0 \\ \medskip
+\gamma_2\left(\dfrac{1+a_3}{a_4+1}\right) & 0 & -\gamma_2a_4\left(\dfrac{1+a_3}{a_4+1}\right) \\
+\end{pmatrix} $   
+\\
+
+\vspace{0.5cm}
+Calcolando il determinante di $J(E_5)-\lambda I$ rispetto la seconda riga, trovo che: $j_{22}=\gamma_1\left(\dfrac{a_4-a_3}{a_4+1}-d_1\right)$ è uno degli autovalori della matrice jacobiana e risulta:\\
+
+    $j_{22}<0 \iff \dfrac{a_4-a_3}{a_4+1}<d_1$
+
+
+Gli altri autovalori sono dati dal minore $J_{22}=\begin{pmatrix}
+\dfrac{a_3-a_4}{a_4+1}& \dfrac{a_3-a_4}{a_4+1} \\ \medskip 
+\gamma_2\left(\dfrac{1+a_3}{a_4+1}\right) & -\gamma_2a_4\left(\dfrac{1+a_3}{a_4+1}\right) \\
+\end{pmatrix} $\\
+
+Calcolandone traccia e determinante trovo che:\\
+
+$Tr(J_{22})= \dfrac{a_3-a_4}{a_4+1}-\gamma_2a_4\left(\dfrac{1+a_3}{a_4+1}\right)<0 \iff a_3<a_4 $\\
+$Det(J_{22})=\left(\dfrac{1+a_3}{a_4+1}\right)\left( \dfrac{a_3-a_4}{a_4+1}\right) \gamma_2 (1+a_4) >0 \iff a_3<a_4 $ \\
+
+Applicando il criterio di Routh-Hurwitz per matrici di dimensione 2 trovo che se $a_3<a_4$, gli altri due autovalori di $J\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right)$ hanno parte reale negativa. \\
+
+\vspace{0.5cm}
+
+Quindi se $a_3<a_4$ e $\dfrac{a_4-a_3}{a_4+1}<d_1$ dal I Teorema di Liapunov posso concludere che:\\
+
+$ E_5 $ risulta localmente asintoticamente stabile $\iff 
+0<\dfrac{a_4-a_3}{a_4+1}<d_1$
+\\
+\end{itemize}
+
+\vspace{2cm}
+\noindent
+I risultati ottenuti per la stabilità degli equilibri di non coesistenza sono riassunti nelle tabelle 2.1 e 2.2.
+\vspace{1.5cm}
+\noindent
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{2} 
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{ |p{4cm}|p{4cm}|}
+\hline
+\multicolumn{2}{|c|}{Sistema (1.12) con predatore specialista} \\
+\hline
+Equilibrio & Stabilità \\
+\hline
+$E_1=(0,0,0)$ & instabile \\
+$E_2=(1,0,0)$ & $d_1>1 $ e $d_2>1$ \\
+$E_3=(d_1,1-d_1,0)$ & $d_1<1$ e \par \vspace{0.2cm} \newline $d_2>d_1+\frac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}$\\
+$E_4=(d_2,0,1-d_2)$ & $d_2<d_1 $ e $d_2<1$ \\
+
+\hline
+\end{tabular}
+\end{center}
+\caption{Predatore specialista: condizioni sufficienti per la stabilità dei punti di equilibrio  }
+  \label{tab:equilibrisistemaspecialista}
+\end{table}
+
+\vspace{0.4cm}
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{2} 
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{ |p{4cm}|p{4cm}|}
+\hline
+\multicolumn{2}{|c|}{Sistema (1.13) con predatore generalista} \\
+\hline
+Equilibrio & Stabilità \\
+\hline
+$E_1=(0,0,0)$ & instabile \\
+$E_2=(1,0,0)$ & instabile \\
+$E_3=(d_1,1-d_1,0)$ & instabile \\
+$E_4=(0,0,\frac{a_3}{a_4})$ & $\frac{a_3}{a_4}>1$ \\
+$E_5=(\frac{a_4-a_3}{a_4+1},0,\frac{1+a_3}{a_4+1})$ & $0<\frac{a_4-a_3}{a_4+1}<d_1$ \\
+
+\hline
+\end{tabular}
+\end{center}
+\caption{Predatore generalista: condizioni sufficienti per la stabilità dei punti di equilibrio  }
+  \label{tab:equilibrisistemageneralista}
+\end{table}
+
+\vspace{2cm}
+\noindent
+In sintesi: dallo studio della stabilità degli equilibri di ciascun sistema si deduce che:
+\begin{itemize}
+    \item[*] Per entrambi i sistemi l'equilibrio $E_1=(0,0,0)$ di estinzione di tutte e tre le specie risulta sempre instabile.
+    \item[*] Per il primo modello con predatore specialista (1.12), quando $E_2=(1,0,0)$ risulta asintoticamente localmente stabile, sono ammissibili solamente $E_1 $ ed $ E_2. $
+    \item[*] Inoltre, sempre per il caso con predatore specialista, $E_3$ ed $E_4 $ non possono essere contemporaneamente asintoticamente stabili. 
+    \item[*] Per il secondo modello con predatore generalista (1.13), se $E_4 $ è localmente asintoticamente stabile, non è ammissibile l'equilibrio $ E_5 $.
+    \item[*] Infine, sempre per il caso con predatore generalista, $E_2=(1,0,0)$ ed $ E_3=(d_1,1-d_1,0)$, sono sempre punti di equilibrio instabili, mentre per il sistema con predatore specialista (1.12), sotto determinate condizioni, potrebbero essere localmente asintoticamente stabili.
+    
+\end{itemize}
+
+
+\newpage
+
+\section{Analisi dei sistemi piani ridotti}
+\subsection[Sottosistema $x$-$y$]{\underline{Sottosistema $x$-$y$}}
+\noindent
+Osserviamo che i sistemi (1.12) e (1.13) hanno entrambi lo stesso sottosistema nel piano invariante $(x,y)$, che contiene le dinamiche della risorsa $x$ e della preda IG $y$ nel caso in cui il predatore IG $z$ sia assente. Tale sistema risulta:
+
+\begin{equation}
+\label{eq:sottosistemaxy}
+\begin{cases}
+\dot{x}=  x(1-x-y-z)  \\[5pt]
+\dot{y}= \gamma_1 y (x  -  d_1) \\[5pt]
+\end{cases}
+\end{equation}
+
+\vspace{0.7cm}
+\noindent
+Vale la seguente\\
+
+\noindent
+\underline{Proposizione}\\
+\begin{itemize}
+
+    \item[*] L'equilibro $E_2=(1,0)$ è globalmente asintoticamente stabile per il sottosistema \eqref{eq:sottosistemaxy} $ \iff d_1\geq1$.
+
+    \item[*] L'equilibrio $E_3=(d_1,1-d_1)$ è globalmente asintoticamente stabile per il sottosistema \eqref{eq:sottosistemaxy} $  \iff d_1<1$.
+\end{itemize}
+
+\vspace{0.7cm}
+\noindent
+\underline{Dimostrazione:}
+\vspace{0.8cm}
+\begin{itemize}
+\item Nel caso in cui $d_1>1$ \\
+
+Poichè $\limsup_{\tau \to \infty} x(\tau)\leq1 $ si ha che $ \forall \epsilon>0 :  d_1>1+\epsilon $ e per $\tau  $ sufficientemente grande, si ha che $
+\dot{y}=\gamma_1y(x-d_1)\leq\gamma_1y(1+\epsilon-d_1)$. \\
+Allora, utilizzando il teorema del confronto per problemi di Cauchy \cite{6}, posso concludere che:
+$d_1>1 \longrightarrow \limsup_{\tau \to \infty} y(\tau)=0 $\\
+
+Ora, poichè $\limsup_{\tau \to \infty} y(\tau)=0 $ si ha che $ \forall \delta>0  \ \exists \tau_0 : \forall \tau\geq\tau_0  $ si abbia $\dot{x}\geq x(1-x-\delta) $.\\
+Riapplicando il teorema del confronto per problemi di Cauchy \cite{6}, deduco che 
+$\liminf_{\tau \to \infty} x(\tau)=1 \\
+$ ed infine: $\lim_{\tau \to \infty} x(\tau)=1\\
+$ Posso quindi concludere che, nel caso in cui $d_1>1$, $E_2=(1,0) $ è globalmente asintoticamente stabile per il sottosistema \eqref{eq:sottosistemaxy}.
+\newpage
+\item Nel caso in cui $d_1<1$ \\
+
+So che $ \exists E_3=(d_1,1-d_1).$  Valutando la matrice Jacobiana del campo vettoriale associato al sottosistema \eqref{eq:sottosistemaxy} in $E_3$ , ottengo: 
+
+$J(d_1,1-d_1)$=  $ \begin{pmatrix}
+-d_1& -d_1 \\
+\gamma_1(1-d_1) &  0 \\
+
+\end{pmatrix} $ 
+
+dal criterio di Routh Hurwitz per matrici di dimensione 2 \cite{5}, poichè la matrice risulta avere determinante positivo e traccia negativa, posso concludere che $E_3$ è localmente asintoticamente stabile.\\
+
+Mentre per $E_1=(0,0)$ e $E_2=(1,0)$, che sono sempre ammissibili, ottengo:
+
+$J(0,0)$=  $ \begin{pmatrix}
+1& 0 \\
+0 &  -\gamma_1d_1 \\
+
+\end{pmatrix} $  
+
+con autovalori reali e discordi, dunque $E_1$ è un punto sella, e: \\
+
+$J(1,0)$=  $ \begin{pmatrix}
+-1& -1 \\
+0 &  \gamma_1(1-d_1) \\
+\end{pmatrix} $  
+
+con autovalori reali e discordi, dunque anche $E_2$ è un punto sella.\\
+
+Poichè 
+$\limsup_{\tau \to \infty} x(\tau)\leq1 $ e $ \limsup_{\tau \to \infty} y(\tau)\leq\frac{1+d_1\gamma_1}{d_1} $ 
+
+posso considerare il campo vettoriale $\underline{f}$ associato al sottosistema \eqref{eq:sottosistemaxy} di classe $C^1$ su un dominio $\Omega$ regolare e limitato, contenuto in $\mathbb{R}^2$. Allora il criterio di Dulac mi permette di escludere la presenza di cicli. Infatti considerando la funzione scalare:
+$\rho:\Omega \to \mathbb{R},\ \rho \in C^1(\Omega)\ $ definita come: 
+$\rho(x,y) =\dfrac{1}{xy} $, risulta che: $ div(\rho \underline{f}) $ ha segno costante su $\Omega:$ \\
+
+$ div(\rho \underline{f})=-\dfrac{1}{y}<0  \quad \forall(x,y)\in \(\mathbb{R}\)^2 $ \\
+
+Dunque dal corollario del teorema di Poincarè-Bendixson \cite{4}: tutte le traiettorie che si originano in $\Omega$, vengono dirette dal campo $\underline{f}$ verso l'unico equilibrio stabile $E_3$, che risulta quindi globalmente asintoticamente stabile.
+
+\vspace{1cm}
+\item Nell'ultimo caso in cui $d_1=1$, l'equilibrio $E_3$ viene a coincidere con $E_2=(1,0)$ e lo jacobiano risulta \\
+
+$J(1,0)=   \begin{pmatrix}
+-1& -1 \\
+0 &  0 \\
+\end{pmatrix} $  \\
+
+Studiando il segno delle componenti del campo, deduco che le possibili direzioni di quest'ultimo sono solamente tre e sono raffigurate in Figura \ref{pianodifasexy}, dunque posso escludere la presenza di cicli. \\ 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{pianodifasexyduno.png}
+\caption{Possibili direzioni del campo}
+\label{pianodifasexy}
+
+
+\end{figure}
+Riapplicando il teorema di Poincarè-Bendixson \cite{4}, posso concludere che $E_2$, anche nel caso $d_1=1$, risulta globalmente asintoticamente stabile. 
+
+\end{itemize}
+ \vspace{2cm}
+
+\newpage
+\subsection[Sottosistema $x$-$z$]{\underline{Sottosistema $x$-$z$}}
+
+
+\noindent
+\subsubsection{Caso del predatore generalista}
+
+\noindent
+Occupiamoci di studiare il sottosistema che si ottiene dal modello con predatore generalista (1.13) quando la preda IG è assente, ossia nel piano invariante $(x,z)$. Il sistema si riduce a:
+
+\begin{equation}
+\label{eq:sottosistemaxz}
+\begin{cases}
+\dot{x}=  x(1-x-z)  \\[5pt]
+\dot{z}=  \gamma_2z(a_3-a_4z+x) \\[5pt]
+\end{cases}
+\end{equation}
+
+
+\vspace{0.7cm}
+\noindent
+con matrice Jacobiana: \\
+
+
+$J(x,z)$=  $ \begin{pmatrix}
+1-2x-z & -x \\
+\gamma_2z &  \gamma_2(a_3+x-2a_4z) \\
+\end{pmatrix} $  \\
+
+\vspace{0.6cm}
+\noindent
+Il sistema ammette:
+\begin{itemize}
+\item Gli equilibri $E_1=(0,0)$ ed $E_2=(1,0)$ che risultano essere sempre punti sella. \\
+
+\item L'equilibrio $E_4=\left(0,\dfrac{a_3}{a_4}\right)$, in cui lo jacobiano vale:\\
+
+$J\left(0,\dfrac{a_3}{a_4}\right) $=
+\renewcommand{\arraystretch}{2}
+\begin{pmatrix}
+
+1-\dfrac{a_3}{a_4} & 0 \\
+\gamma_2\dfrac{a_3}{a_4} &  -\gamma_2a_3 \\
+
+\end{pmatrix} 
+\\
+
+e dunque risulta: \\
+
+$E_4$ localmente asintoticamente stabile $\iff a_3>a_4 $ \\
+$E_4$ punto sella $\iff a_3<a_4 $ \\
+
+
+\item 
+L'equilibrio $E_5=\left(\dfrac{a_4-a_3}{a_4+1},\dfrac{1+a_3}{a_4+1}\right),$ ammissibile solo nel caso in cui $a_3<a_4$ , in cui lo jacobiano vale:\\
+
+$J\left(\dfrac{a_4-a_3}{a_4+1},\dfrac{1+a_3}{a_4+1}\right)$= 
+\renewcommand{\arraystretch}{2}
+\begin{pmatrix}
+\dfrac{a_3-a_4}{a_4+1} & \dfrac{a_3-a_4}{a_4+1} \\
+\gamma_2\dfrac{1+a_3}{a_4+1} &  -\gamma_2a_4\dfrac{1+a_3}{a_4+1} \\
+\end{pmatrix}
+ \\
+
+e dunque risulta:\\
+
+$E_5$ localmente asintoticamente stabile $\iff a_3<a_4$, cioè quando esiste. \\
+\end{itemize}
+
+\vspace{1.2cm}
+\begin{itemize}
+    
+\item[*] Nel caso in cui $a_4<a_3$ \\
+
+Il sottosistema \eqref{eq:sottosistemaxz} ammette dunque come equilibri: $E_1$ ed $E_2$, punti sella, ed $E_4= \displaystyle \left(0,\frac{a_3}{a_4}\right)$, asintoticamente stabile. \\
+
+Poichè $\liminf_{\tau \to \infty} z(\tau)\geq\dfrac{a_3}{a_4} $, per  $\tau$ abbastanza grande si ha:\\
+
+$\dot{x}=x(1-x-z)\leq x\left(1-x-\dfrac{a_3}{a_4}\right)\leq x\left(1-\dfrac{a_3}{a_4}\right). $\\
+
+Dunque $\limsup_{\tau \to \infty} x(\tau)=0 \\ \longrightarrow \  \forall \delta>0 \ \exists\ \tau_0 : \forall \tau\geq\tau_ 0 $ si ha: $\dot{z}\leq\gamma_2z(a_3-a_4z+\delta)$ $\longrightarrow \limsup_{\tau \to \infty} z(\tau)=\dfrac{a_3}{a_4}$
+
+quindi, sapendo anche che: $\liminf_{\tau \to \infty} z(\tau)\geq\dfrac{a_3}{a_4} $
+si ha \\ $\lim_{\tau \to \infty} z(\tau)=\dfrac{a_3}{a_4}$. \\
+
+Posso quindi concludere che $E_4=\left(0,\dfrac{a_3}{a_4}\right) $ è globalmente asintoticamente stabile per il sottosistema \eqref{eq:sottosistemaxz}.
+
+\vspace{1cm}
+\item[*] Nel caso in cui $a_3<a_4$\\
+
+Il sottosistema \eqref{eq:sottosistemaxz} ammette come equilibri: $E_1$ ed $E_2$ ed $E_4$, punti sella, ed $E_5=\left(\dfrac{a_4-a_3}{a_4+1},\dfrac{1+a_3}{a_4+1}\right)$, asintoticamente stabile.\\
+
+Poichè $ \limsup_{\tau \to \infty} x(\tau) \leq 1 $  e 
+
+\begin{equation}
+\label{eq:a3a4}
+\frac{a_3}{a_4} \leq \liminf_{\tau \to \infty} z(\tau) \leq \limsup_{\tau \to \infty} z(\tau) \leq \frac{a_2+a_3+1}{a_4}
+\end{equation}
+
+posso considerare il campo vettoriale $\underline{f}$ associato a \eqref{eq:sottosistemaxz} di classe $C^1$ su un dominio $\Omega$ regolare e limitato, contenuto in $\mathbb{R}^2$. Allora il criterio di Dulac mi permette di escludere la presenza di cicli. Infatti considerando la funzione scalare:
+$\rho:\Omega \to \mathbb{R},\ \rho \in C^1(\Omega)\ $ definita come: 
+$\rho(x,z) =\dfrac{1}{xz}$, risulta che: $ div(\rho \underline{f}) $ ha segno costante su $\Omega$: \\
+\noindent
+$ div(\rho \underline{f})=-\dfrac{1}{z}-\dfrac{a_4\gamma_2}{x}<0  \quad  \forall(x,y)\in \mathbb{R}^2$. \\
+
+Dunque dal corollario del teorema di Poincarè-Bendixson \cite{4}: tutte le traiettorie che si originano in $\Omega$, vengono dirette dal campo $\underline{f}$ verso l'unico equilibrio stabile $E_5$, che risulta quindi globalmente asintoticamente stabile.
+
+\vspace{1cm}
+\item[*] Nel caso in cui $a_3=a_4$, l'equilibrio $E_4$ viene a coincidere con $E_5=(0,1)$ e lo jacobiano risulta:\\
+
+
+$ J\left(0,\dfrac{a_3}{a_4}\right)=J(0,1)$=  $ \begin{pmatrix}
+0& 0 \\
+\gamma_2 &  -\gamma_2a_3 \\
+\end{pmatrix} $  \\ 
+
+%da mettere direzione campo
+Studiando il segno delle componenti del campo, deduco che le possibili direzioni di quest'ultimo sono solamente tre e sono raffigurate in Figura \ref{pianodifasexz}, dunque posso escludere la presenza di cicli. \\
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{pianodifasexz.png}
+\caption{Possibili direzioni del campo}
+\label{pianodifasexz}
+\end{figure}
+
+Riapplicando il teorema di Poincarè-Bendixson \cite{4}, posso concludere che $E_4 $, anche nel caso $a_3=a_4$, risulta globalmente asintoticamente stabile. 
+
+\end{itemize}
+\vspace{1cm}
+Quindi riassumendo:
+\begin{itemize}
+    \item $a_4 \leq a_3 \iff E_4=\left(0,\dfrac{a_3}{a_4}\right)$ è globalmente asintoticamente stabile. 
+    \item $a_4 > a_3 \iff E_5=\left(\dfrac{a_4-a_3}{a_4+1},\dfrac{1+a_3}{a_4+1}\right)$ è globalmente asintoticamente stabile.
+\end{itemize}
+
+\vspace{2cm}
+\noindent
+\subsubsection{Caso del predatore specialista}
+
+\noindent
+Occupiamoci ora di studiare il sottosistema che si ottiene dal modello con predatore specialista (1.12) quando la preda IG è assente, ossia nel piano invariante $(x,z)$. Il sistema si riduce a:: 
+
+\begin{equation}
+\label{eq:sottosistemaxzspecia}
+\begin{cases}
+\dot{x}=  x(1-x-z)  \\[5pt]
+\dot{z}=  \gamma_2z(x-d_2) \\[5pt]
+\end{cases}
+\end{equation}
+
+\vspace{0.7cm}
+\noindent
+con matrice jacobiana: 
+$J(x,z)$=  $ \begin{pmatrix}
+1-2x-z & -x \\
+\gamma_2z &  \gamma_2(x-d_2) \\
+\end{pmatrix} $  \\
+
+\vspace{0.6cm}
+\noindent
+Il sistema ammette:
+\begin{itemize}
+\item L'equilibrio $E_1=(0,0)$, che risulta essere un punto sella. \\
+
+\item L'equilibrio $ E_2=(1,0)$, in cui lo jacobiano vale: \\
+
+$J(1,0)$ =  $ \begin{pmatrix}
+-1 & -1 \\
+0 &  \gamma_2(1-d_2) \\
+\end{pmatrix} $    \\
+
+e dunque risulta:\\
+
+$E_2$ localmente asintoticamente stabile $\iff d_2>1  $\\
+$E_2$ punto sella $\iff d_2<1$ \\ 
+
+\item L'equilibrio $E_3=(d_2,1-d_2)$, ammissibile solo se $d_2<1$, in cui lo jacobiano vale: \\
+
+$J(d_2,1-d_2)$ =  $ \begin{pmatrix}
+-d_2 & -d_2 \\
+\gamma_2(1-d_2) & 0 \\
+\end{pmatrix} $   \\
+
+dunque dal criterio di Routh-Hurwitz per matrici di dimensioni 2 \cite{5} risulta che $E_3$ è localmente asintoticamente stabile.\\
+(Nel caso in cui $d_2=1$, l'equilibrio coincide con $E_1$.)
+\\ 
+
+\vspace{1.2cm}
+\item[*] Nel caso in cui $d_2<1$ \\
+
+Il sottosistema \eqref{eq:sottosistemaxzspecia} ammette dunque come equilibri: $E_1$ ed $E_2$ , punti sella, ed $E_3=(d_2,1-d_2)$, asintoticamente stabile.
+
+Poichè $ \limsup_{\tau \to \infty} x(\tau) \geq 1 $  e \\ $\dfrac{a_3}{a_4} \leq \liminf_{\tau \to \infty} z(\tau) \leq \limsup_{\tau \to \infty} z(\tau) \leq \dfrac{a_2+a_3+1}{a_4}$
+
+posso concludere che il campo vettoriale $\underline{f}$ associato a \eqref{eq:sottosistemaxzspecia} è di classe $C^1$ su un dominio $\Omega$ regolare e limitato, contenuto in $\mathbb{R}^2$.
+Allora il criterio di Dulac mi permette di escludere la presenza di cicli. Infatti considerando la funzione scalare:
+$\rho:\Omega \to \mathbb{R},\ \rho \in C^1(\Omega)\ $ definita come$: 
+\rho(x,z) =\dfrac{1}{xz}$, risulta che: $ div(\rho \underline{f}) $ ha segno costante su $\Omega.$ 
+
+$ div(\rho \underline{f})=-\dfrac{1}{z}<0 \quad  \forall(x,y)\in \(\mathbb{R}\)^2$
+
+Dunque dal corollario del teorema di Poincarè-Bendixson \cite{4}: tutte le traiettorie che si originano in $\Omega$, vengono dirette dal campo $\underline{f}$ verso l'unico equilibrio stabile $E_3$, che risulta quindi globalmente asintoticamente stabile.
+
+\vspace{1cm}
+\item[*] Nel caso in cui $d_2>1$ \\
+
+Il sottosistema \eqref{eq:sottosistemaxzspecia} ammette come equilibri: $E_1$, punto sella, ed $E_2=(1,0)$, asintoticamente stabile. \\
+Poichè $\limsup_{\tau \to \infty} x(\tau)\leq 1 \longrightarrow$
+
+$\forall \epsilon >0 : d_2>1+\epsilon$ e per $ \tau$ abbastanza grande si ha $\dot{z}=\gamma_2z(x-d_2) \leq \gamma_2z(1+\epsilon-d_2)$. 
+
+Da: $d_2>1 \longrightarrow \limsup_{\tau \to \infty} z(\tau)=0$, dunque:
+
+$\forall \delta>0 \ \exists \ \tau_0 : \forall \tau \geq \tau_0 $ si ha: $\dot{x} \geq x(1-x-\delta) \longrightarrow \liminf_{\tau \to \infty} x(\tau)= 1 $
+
+Inoltre sapendo che $\limsup_{\tau \to \infty} x(\tau) \leq 1$ ottengo: $ \lim_{\tau \to \infty} x(\tau)= 1 $,
+
+dunque $E_2=(1,0)$ risulta globalmente asintoticamente stabile.
+
+\vspace{1cm}
+\item[*] Nel caso in cui $d_2=1$, l'equilibrio $E_3$ viene a coincidere con $E_2=(1,0)$ e lo jacobiano risulta: \\
+
+$J(E_2)=J(E_3)=J(1,0)$=  $ \begin{pmatrix}
+-1& -1 \\
+0 &  0\\
+\end{pmatrix} $  \\
+
+Studiando il segno delle componenti del campo, posso escludere la presenza di cicli. \\
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{pianomancante.png}
+\caption{Possibili direzioni del campo}
+\label{pianodifasexzdue}
+\end{figure}
+
+Riapplicando il teorema di Poincarè-Bendixson, \cite{4}, posso concludere che $E_2=(1,0) $, anche nel caso in cui $d_2=1$, risulta globalmente asintoticamente stabile. 
+
+\end{itemize}
+\vspace{1cm}
+Quindi riassumendo:
+\begin{itemize}
+    \item $d_2 < 1 \iff E_3=(d_2,1-d_2)$ è globalmente asintoticamente stabile. 
+    \item $d_2 \geq 1 \iff E_2=(1,0)$ è globalmente asintoticamente stabile.
+\end{itemize}
+
+
+
+\vspace{2cm}
+\noindent
+
+\end{singlespace}
+
+\newpage
+\section{Persistenza}\\
+
+\textbf{Persistenza di una specie}\\
+
+\noindent
+Diremo che la specie $x$ è persistente in $\mathbb{R}^3_+$ per i sistemi (1.12) e (1.13) $\iff \exists $ costanti $b$ e $B$: $0<b<B$ tali che $\forall x_0=x(0)>0 $ si abbia $ b\leq \liminf_{\tau \to \infty} x(\tau) \leq \limsup_{\tau \to \infty} x(\tau) \leq B $.
+\noindent
+In modo analogo si definisce la persistenza per le specie $y$ e $z$.\\
+
+\noindent
+\textbf{Permanenza del sistema}\\
+
+\noindent
+Diremo che il sistema (1.12) è permanente in $\mathbb{R}^3_+ \iff \exists $ costanti $b$ e $B$: $0<b<B$ tali che $\forall x_0=x(0)>0,y_0=y(0)>0,z_0=z(0)>0$ si abbia:
+$ b\leq \liminf_{\tau \to \infty} min[x(\tau),y(\tau),z(\tau)] \leq \limsup_{\tau \to \infty} max[x(\tau),y(\tau),z(\tau)]\leq B $. \\
+
+
+ 
+
+
+%\frac{a_3}{a_4} \leq \liminf_{\tau \to \infty} %z(\tau) \leq \limsup_{\tau \to \infty} z(\tau) \leq %\frac{a_2+a_3+1}{a_4}
+
+\noindent
+%Dalla \eqref{eq:a3a4}, allora, la specie $z$ è persistente per il sistema (1.13), infatti è questo il caso in cui il predatore IG sopravviva anche in assenza delle altre due specie. 
+
+\noindent
+%Mi aspetto invece che la specie x sia persistente per il sistema (1.12).\\
+
+
+\vspace{1.5cm}
+\subsection[Persistenza di una singola specie]{\underline{Persistenza di una singola specie}}\\
+
+\vspace{0.8cm}
+\noindent
+\newtheorem{theorem}{Teorema}[section]
+\begin{theorem}
+    \label{teorema}
+\end{theorem}\\
+\noindent
+La specie $x$ è persistente in $\mathbb{R}^3_+$ per il sistema (1.12), con equilibrio $ E_2=(1,0,0) $, che risulta globalmente stabile se $d_1,d_2>1$. \\
+
+\vspace{0.7cm}
+\noindent
+\underline{Dimostrazione}\\
+
+\noindent
+Considero il sottosistema $y$-$z$ di (1.12): 
+
+\begin{equation}
+\label{sottosistemayz}
+\begin{cases}
+\dot{y}= \gamma_1 y \left(- \dfrac{a_1yz}{y^2+\beta^2}  -  d_1\right) \\[8pt]
+\dot{z}= \gamma_2 z \left( \dfrac{a_2y^2}{y^2+\beta^2} -  d_2\right) \\
+
+\end{cases}
+\end{equation}
+
+
+\noindent
+con equilibri: 
+\begin{itemize}
+    \item $E_1=(0,0) $ con $J(0,0)$=  $ \begin{pmatrix}
+-\gamma_1d_1 & 0 \\
+0 &  -\gamma_2d_2 \\
+\end{pmatrix} $
+dunque localmente asintoticamente stabile. 
+
+     \item $E_3=(0,1-d_2) $ che $\nexists $ se $ d_2 >1 $.
+
+     \item $E_4=(1-d_1,0) $ che $ \nexists $ se $ d_1 >1 $
+
+\end{itemize}\\
+\\
+\newpage
+\noindent
+Per mostrare che la specie $x$ è persistente in $\mathbb{R}^3_+$, seguiamo \cite{1}. \\
+
+\noindent
+Considerando il sistema di equazioni differenziali autonome \\
+
+$\dot{x_i}=x_if_i(\underline{x}) \quad (i:1...n)$ dove $f \in C^1(\mathbb{R}^n)$\\
+
+\noindent
+nell'insieme $D=\{\underline{x}:x_i>0 \quad \forall i:1...n\}$ 
+
+\noindent
+allora il sistema si dice permanentemente coesistente se e solo se esiste un insieme compatto $M$ in $D$ tale che ogni semiorbita in $D$ tende ad $M$.\\
+
+\noindent
+Se consideriamo l'equilibrio $E_1=(0,0,0)$ e valutiamo in esso:\\
+
+$ \dfrac{1}{x} \dfrac{dx}{d\tau}\big|_{(0,0,0)}= \dfrac{\dot{x}}{x}\big|_{(0,0,0)} = (1-x-y-z)\big|_{(0,0,0)}=1>0$\\  
+
+\noindent 
+la stretta positività implica la persistenza della specie $x$. Per i dettagli si veda \cite{3}.\\
+
+\noindent
+Infine, per mostrare che $ E_2$ è globalmente asintoticamente stabile se $d_1,d_2>1$, definisco: \\
+$ V=\gamma_2a_2y+\gamma_1a_1z$ \\
+$\forall \epsilon > 0: 1+\epsilon<min[d_1,d_2], \ \exists \ \tau_0 \ $ tale che $  \forall \tau > \tau_0 $ si ha: \\
+$ V'=\gamma_2a_2y'+\gamma_1a_1z' \leq \gamma_1\gamma_2a_2y(1+\epsilon-d_1)+\gamma_1\gamma_2a_1z(1+\epsilon-d_2) \\
+\leq max[1+\epsilon-d_1,1+\epsilon-d_2](\gamma_2a_2y+\gamma_1a_1z)=max[1+\epsilon-d_1,1+\epsilon-d_2]V $\\
+
+\noindent
+Poichè $ max[1+\epsilon-d_1,1+\epsilon-d_2]=1+\epsilon-min[d_1,d_2]<0 $, applicando il teorema del confronto per problemi di Cauchy \cite{6}, ottengo: $\lim_{\tau \to \infty} V(\tau)=0$ \\e dall'espressione di $V$ si ottiene $
+$\lim_{\tau \to \infty} y(\tau)=0 $ e $\lim_{\tau \to \infty} z(\tau)=0$. \\
+Concludo quindi che il sistema limite di (1.12) è $\dot{x}=x(1-x) $\
+$\longrightarrow \\ \lim_{\tau \to \infty} x(\tau)=1 $\\
+
+\noindent
+$\Longrightarrow $
+$ E_2=(1,0,0)$ è globalmente asintoticamente stabile se $d_1,d_2>1$.
+
+\clearpage
+\begin{theorem}
+\end{theorem}
+
+\noindent
+La specie $z$ è persistente in $\mathbb{R}^3_+$ per il sistema (1.13),\\ con equilibrio $ E_4=\left(0,0,\dfrac{a_3}{a_4}\right) $, globalmente stabile se $a_3>a_4$.\\
+
+\vspace{0.7cm}
+\noindent
+\underline{Dimostrazione}\\
+
+\noindent
+Da \eqref{eq:a3a4}, so che: \\
+
+
+$\dfrac{a_3}{a_4} \leq \liminf_{\tau \to \infty} z(\tau) \leq \limsup_{\tau \to \infty} z(\tau) \leq \dfrac{a_2+a_3+1}{a_4}$\\
+
+
+\noindent
+per definizione, la specie $z$ risulta persistente per il sistema (1.13), infatti, nel caso di predatore IG generalista esso sopravvive anche in assenza delle altre due specie.\\
+
+\noindent
+Da $ \dfrac{a_3}{a_4}\leq \liminf_{\tau \to \infty} z(\tau) $, supponendo $a_3>a_4 \longrightarrow \forall \epsilon >0 \ \exists \ \tau_0 : \forall \tau> \tau_0 $ t.c.\\
+
+$\dot{x}=x(1-x-y-z) \leq x(1-z) \leq x\left(1-\dfrac{a_3}{a_4}+\epsilon\right)$ \\
+
+\noindent
+Allora dal teorema del  confronto per problemi di Cauchy \cite{6}, posso concludere che: 
+$\lim_{\tau \to \infty} x(\tau)=0$; \\
+Inoltre siccome la risorsa condivisa $x$ è l'unica fonte di sopravvivenza per la preda IG $y$, posso dedurre:
+$\lim_{\tau \to \infty} y(\tau)=0$; \\
+$\longrightarrow $\ il sistema limite di \eqref{sottosistemayz} è $\dot{z}=\gamma_2z(a_3-a_4z) $\
+$\longrightarrow \lim_{\tau \to \infty} z(\tau)=\dfrac{a_3}{a_4} $\\
+
+\noindent
+$\Longrightarrow \
+E_4=\left(0,0,\dfrac{a_3}{a_4}\right)$ è globalmente asintoticamente stabile per (1.13) se $a_3>a_4$.
+
+
+\newpage
+
+\subsection[Persistenza di due specie]{\underline{Persistenza di due specie}}\\
+\vspace{0.8cm}
+\begin{theorem}
+    \label{thm:persistenza2specie}
+\end{theorem}
+
+\noindent
+Per il sistema (1.12)
+    \begin{itemize}
+    \item Le specie $x$ e $y$ sono persistenti in $\mathbb{R}^3_+$ se e solo se $ d_1<min[1,d_2]$. \\
+Inoltre nel caso in cui $d_2>1>d_1$ e $d_2>1+a_2$, $E_3=(d_1,1-d_1,0) $ risulta globalmente asintoticamente stabile. 
+
+    \item Le specie $x$ e $z$ sono persistenti in $\mathbb{R}^3_+$ se e solo se \\$d_1+\dfrac{a_2(d_1-1)^2}{(d_1-1)^2+\beta^2}>d_2$ e $d_1<1$ oppure se e solo se $d_2<1<d_1$.\\
+    Inoltre nel caso in cui $d_2<1<d_1$, $E_4=(d_2,0,1-d_2) $ risulta globalmente asintoticamente stabile. 
+\end{itemize}\\
+\vspace{0.6cm}
+\noindent
+Per il sistema (1.13)
+    \begin{itemize}
+    \item Le specie $x$ e $z$ sono persistenti in $\mathbb{R}^3_+$ se e solo se $a_3<a_4$. \\
+Inoltre nel caso in cui $d_1>1$ e $a_3<a_4$, $ E_5=\left(\dfrac{a_4-a_3}{1+a_4},0,\dfrac{1+a_3}{1+a_4}\right) $ risulta globalmente asintoticamente stabile. 
+
+    \item Le specie $y$ e $z$ sono persistenti in $\mathbb{R}^3_+$ se e solo se $ a_3<a_4$ e $\dfrac{a_4-a_3}{1+a_4}>d_1$.\\
+    \end{itemize}
+
+\vspace{0.8cm}
+\noindent
+\underline{Dimostrazione}\\
+
+\noindent
+Per il sistema (1.12) so che la specie $x$ è persistente in $\mathbb{R}^3_+$, allora le condizioni sufficienti per la persistenza contemporanea delle specie $x$ e $y$, o di $x$ e $z$, coincideranno con le condizioni per la persistenza di $y$ e di $z$, rispettivamente.\\
+
+\noindent
+In accordo a quanto visto nella sezione precedente, l'insieme $\omega-limite$ del sottosistema $x$-$z$, \eqref{eq:sottosistemaxzspecia}, risulta:
+\begin{itemize}
+\item[*] se $ d_2>1 \longrightarrow E_2=(1,0,0) $
+\item[*] se $ d_2<1 \longrightarrow E_4=(d_2,0,1-d_2) $
+\end{itemize}\\
+
+\vspace{0.6cm}
+\noindent
+Nel primo caso, in cui supponiamo $d_2>1$, per mostrare che la specie $y$ è persistente in $\mathbb{R}^3_+$, seguo \cite{1}.\\
+
+\noindent
+Considero l'equilibrio $E_2=(1,0,0)$ e valuto in esso:
+
+
+$ \dfrac{\dot{y}}{y}\big|_{(1,0,0)} = \gamma_1\left(x-\dfrac{a_1yz}{y^2+\beta^2}-d_1\right)\big|_{(1,0,0)}=\gamma_1(1-d_1)>0 \iff d_1<1$  \\ 
+
+\noindent quindi, dalla stretta positività la specie $y$ è persistente in $\mathbb{R}^3_+$ se $d_1<1$.\\
+
+\vspace{0.6cm}
+\noindent
+Supponendo invece $d_2<1$, analogamente, se $d_2>d_1$ ottengo:\\
+
+\noindent
+$ \dfrac{\dot{y}}{y}\big|_{(d_2,0,1-d_2)} = \gamma_1\left(x-d_1-\dfrac{a_1yz}{(y^2+\beta^2)^2}\right)\big|_{(d_2,0,1-d_2)}=\gamma_1(d_2-d_1)>0 $ \\
+
+\noindent
+e la specie y risulta persistente in $ \mathbb{R}^3_+$.\\
+
+\vspace{0.7cm}
+\noindent
+Riassumendo i risultati ottenuti finora: \\
+le specie $x$ e $y$ sono persistenti in $\mathbb{R}^3_+ \iff d_1<min[1,d_2]$.
+\vspace{1cm}\\
+
+\noindent
+Invece, nel caso particolare in cui: $d_2>1>d_1$, assumendo inoltre $d_2>1+a_2$, mostro che la specie $z$ tende ad estinguersi per tempi lunghi.\\
+\noindent
+Sapendo che $\limsup_{\tau \to \infty} x(\tau) \leq 1 $, allora per $\tau$ abbastanza grande, si ha: \\
+
+$\dot{z}= \gamma_2 z \left(x  + \dfrac{a_2y^2}{y^2+\beta^2} - d_2\right) < \gamma_2z(1+a_2-d_2)  \Longrightarrow \lim_{\tau \to \infty} z(\tau)=0 $\\
+
+\noindent
+Quindi se $d_2>1>d_1$ e $d_2>1+a_2$, l'insieme $\omega-limite $ di (1.12) è il sottosistema $x$-$y$,  \eqref{eq:sottosistemaxy},
+%$
+%\begin{cases}
+%\dot{x}=  x(1-x-y)  \\
+%\dot{y}=  \gamma_1 y (x  -  d_1) \\
+%\end{cases}
+%$\\
+con l'equilibrio $E_3=(d_1,1-d_1,0)$ globalmente asintoticamente stabile.
+
+
+\vspace{2cm}
+\noindent
+In accordo ai risultati ottenuti nelle sezioni precedenti, l'insieme $\omega-limite$ del sottosistema $x$-$y$, \eqref{eq:sottosistemaxy}, è:
+\begin{itemize}
+\item[*] se $ d_1>1 \longrightarrow E_1=(1,0,0) $
+\item[*] se $ d_1<1 \longrightarrow E_3=(d_1,1-d_1,0) $
+\end{itemize}
+
+\vspace{0.6cm}
+\noindent
+Nel primo caso, in cui supponiamo $d_1>1$, per mostrare che la specie $z$ è persistente in $ \mathbb{R}^3_+$, seguo \cite{1}.\\
+
+\noindent
+Considero l'equilibrio $E_2=(1,0,0)$ e valuto in esso:\\
+
+$\dfrac{\dot{z}}{z}\big|_{(1,0,0)} = \gamma_2\left(x+\dfrac{a_2y^2}{y^2+\beta^2}-d_2\right)\big|_{(1,0,0)}=\gamma_2(1-d_2)>0 \iff d_2<1$ \\
+
+\noindent
+quindi, dalla stretta positivita, la specie $z$ è persistente in $ \mathbb{R}^3_+$ se $d_2<1$.\\
+
+\vspace{0.6cm}
+\noindent
+Supponendo invece $d_1<1$, analogamente,
+se $d_1+\dfrac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}>d_2$, ottengo:\\
+
+$\dfrac{\dot{z}}{z}\big|_{(d_1,1-d_1,0)} = \gamma_2\left(d_1+\dfrac{a_2(1-d_1)^2}{(1-d_1)^2+\beta^2}-d_2\right)>0$ \\
+
+\noindent
+e la specie $z$ risulta persistente in $ \mathbb{R}^3_+$.\\
+
+\vspace{0.6cm}
+\noindent
+Osservo che nel caso in cui $d_1>1$, la specie y tende ad estinguersi per tempi lunghi. Infatti sapendo che $\limsup_{\tau \to \infty} x(\tau) \leq 1 \Longrightarrow $ per $\tau$ sufficientemente grande, si ha: \\
+
+$\dot{y}=\gamma_1 y \left(x  - \dfrac{a_1yz}{y^2+\beta^2}-d_1\right)<\gamma_1y(1-d_1)  \Longrightarrow \lim_{\tau \to \infty} y(\tau)=0 $\\
+
+\noindent
+Quindi nel caso in cui $d_1>1>d_2$, l'insieme $\omega-limite $ di (1.12) è il sottosistema $x$-$z$, \eqref{eq:sottosistemaxzspecia},
+%$
+%\begin{cases}
+%\dot{x}=  x(1-x-z)  \\
+%\dot{y}= \gamma_2 z (x  -  d_2) \\
+%\end{cases}
+%$\\
+che ha equilibrio $E_4=(d_2,0,1-d_2) $ globalmente asintoticamente stabile.
+
+
+
+
+\newpage
+\noindent
+Per il sistema (1.13), invece, so che la specie $z$ è persistente in $\mathbb{R}^3_+$, allora le condizioni sufficienti per la persistenza contemporanea delle specie $x$ e $z$, o di $y$ e $z$, coincideranno con le condizioni per la persistenza di $x$ e di $y$, rispettivamente.\\
+
+\noindent
+Mi occupo di studiare il sottosistema $y$-$z$ nel caso del predatore generalista:
+
+\begin{equation}
+\label{eq:sottosistemayzgene}
+\begin{cases}
+
+\dot{y}=  -\gamma_1y\left(\dfrac{a_1yz}{y^2+\beta^2}+d_1\right)  \\[6pt]
+
+\dot{z}=  \gamma_2 z \left(a_3-a_4z+\dfrac{a_2y^2}{y^2+\beta^2}\right)\\[6pt]
+
+\end{cases}
+\end{equation}
+
+\vspace{0.6cm}
+
+\noindent
+Si può verificare che l'unico equilibrio asintoticamente stabile è $E_4=\left(0,\dfrac{a_3}{a_4}\right)$.\\
+
+\vspace{0.6cm}
+\noindent
+Nel caso in cui $a_3<a_4$, per mostrare che la specie $x$ è persistente in $ \mathbb{R}^3_+$, seguo \cite{1}.\\
+
+\noindent 
+Considero il punto di equilibrio $E_4=(0,0,\frac{a_3}{a_4})$ e valuto in esso:\\
+
+$  \dfrac{\dot{x}}{x}\big|_{(0,0,\frac{a_3}{a_4})} = (1-x-y-z)\big|_{(0,0,\frac{a_3}{a_4})}>0  \iff  1-\dfrac{a_3}{a_4} >0 $ \\
+
+\noindent
+quindi in questo caso, dalla stretta positività, la specie $x$ risulta persistente in $ \mathbb{R}^3_+$.
+\\
+
+\vspace{0.6cm}
+\noindent
+Osservo che nel caso in cui $d_1>1$, la specie y tende ad estinguersi per tempi lunghi. Infatti sapendo che $\limsup_{\tau \to \infty} x(\tau) \leq 1
+\Longrightarrow $ per $\tau$ sufficientemente grande, si ha: \\
+
+$\dot{y}= \gamma_1 y \left(x  - \dfrac{a_1yz}{y^2+\beta^2}-d_1\right) < \gamma_1y\left(1-d_1\right)  \Longrightarrow \lim_{\tau \to \infty} y(\tau)=0 $\\
+
+\noindent
+Quindi nel caso in cui $a_3<a_4$ e $d_1>1$, l'insieme $\omega-limite $ di (1.13) è il sottosistema $x$-$z$, \eqref{eq:sottosistemaxz} con l'equilibrio $E_5=\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right) $ globalmente asintoticamente stabile.\\
+
+
+%\left{
+%\begin{cases}
+%\dot{x}=  x(1-x-z)  \\
+%\dot{z}= \gamma_2 z (a_3-a_4z+x)\\
+%\end{cases}
+%}
+
+\vspace{0.6cm}
+\noindent
+Poichè l'unica fonte di sopravvivenza per la preda $y$ è la risorsa $x$, per avere la persistenza di $y$ è sicuramente richiesto che $a_3<a_4$, cioè che $x$ persista.
+\noindent
+Inoltre se $\dfrac{a_4-a_3}{a_4+1}>d_1$, considero l'equilibrio $E_5$ e valuto in esso: \\
+
+$ \dfrac{\dot{y}}{y}\big|_{(\frac{a_4-a_3}{a_4+1},0,\frac{1+a_3}{a_4+1})} = \gamma_1 \left(\dfrac{a_4-a_3}{a_4+1}-d_1\right)>0$ \\
+
+\noindent
+quindi, dalla stretta positività, posso concludere che la specie $y$ è persistente in  $\mathbb{R}^3_+$.\\
+
+\noindent
+
+
+\vspace{2cm}
+\subsection[Persistenza di tre specie]{\underline{Persistenza di 3 specie}}\\
+
+\vspace{0.8cm}
+\begin{theorem}
+    \label{thm:persistenza3specie}
+\end{theorem}\\
+
+\noindent
+Per il sistema (1.12), accoppiando le condizioni sufficienti per la persistenza delle specie $x$-$y$ e delle specie $x$-$z$, elencate nella sezione precedente, trovo che:\\
+
+
+(1.12) è permanente in $\mathbb{R}^3_+$ \iff d_1+\dfrac{a_2(d_1-1)^2}{(d_1-1)^2+\beta^2} > d_2 > d_1 $ e $d_2<1$ \\
+
+\noindent
+Analogamente, osservando che per il sistema (1.13), la persistenza della specie $y$ indica la persistenza di x e anche di $z$, trovo che: \\
+
+(1.13) è permanente in $\mathbb{R}^3_+ % \iff y$ è persistente $
+\iff$ $a_3 < a_4 $ e $\dfrac{a_4-a_3}{a_4+1}>d_1$ \\
+
+\vspace{0.6cm}
+\noindent
+Si riassumono nella tabella seguente, i risultati di persistenza di 1,2 o 3 specie, per entrambi i sistemi.
+
+\vspace{1cm}
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{1.5} 
+
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{ |p{0.7cm}|p{6.3cm}|p{3.4cm}|  }
+\hline
+\multicolumn{3}{|c|}{Persistenza delle specie} \\
+\hline
+Specie & Sistema (1.12) & Sistema (1.13) \\
+\hline
+$x$ & sempre &  $\frac{a_3}{a_4}<1$ \\
+$z$ & $d_1+\frac{a_2(d_1-1)^2}{(-1+d_1)^2+\beta^2}>d_2 $ e $d_1<1$ \par \vspace{0.2cm} \newline oppure $d_2<1$ e $d_1>1 $ & sempre \\
+$x,y$ & $d_1<min[1,d_2]$ & $\frac{a_3}{a_4}<1$ e $\frac{a_4-a_3}{a_4+1}>d_1$ \\
+$x,z$   & $d_1+\frac{a_2(d_1-1)^2}{(-1+d_1)^2+\beta^2}>d_2 $ e $d_1<1$ \par \vspace{0.2cm} \newline oppure $d_2<1<d_1$ & $\frac{a_3}{a_4}<1$ \\
+$x,y,z$ & $d_1+\frac{a_2(d_1-1)^2}{(-1+d_1)^2+\beta^2}>d_2>d_1 $ e $d_2<1$ & $\frac{a_3}{a_4}<1$ e $\frac{a_4-a_3}{a_4+1}>d_1$ \\
+
+\hline
+\end{tabular}
+\end{center}
+\caption{Condizioni sufficienti per la persistenza delle specie}
+  \label{tab:Persistenzespecie}
+\end{table}
+
+\vspace{3cm}
+
+\noindent
+\section{Estinzione}\\
+
+\begin{theorem}
+    \label{thm:estinzione}
+\end{theorem}\\
+
+\noindent
+Si trovano le seguenti condizioni sufficienti per l'estinzione di una o due specie. \\
+
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{ |p{0.7cm}|p{6.3cm}|p{3cm}|   }
+\hline
+\multicolumn{3}{|c|}{Estinzione delle specie} \\
+\hline
+Specie & Sistema (1.13) & Sistema (1.13) \\
+\hline
+$x$ & mai &  $\frac{a_3}{a_4}>1$ \\
+$y$ & $d_2<min[1,d_1]$  oppure $d_1>1 $ & $d_1>1 $ oppure $\frac{a_3}{a_4}>1$ \\
+$z$ & $d_2>1+a_2$ & mai \\
+$x,y$   & mai & $\frac{a_3}{a_4}>1$ \\
+$y,z$ & $d_1,d_2>1 $  & mai \\
+
+\hline
+\end{tabular}
+\end{center}
+\caption{Condizioni sufficienti per l'estinzione delle specie}
+  \label{tab:estinzionespecie}
+\end{table}
+
+\vspace{0.8cm}
+\noindent
+\underline{Dimostrazione}:
+
+\begin{itemize}
+    \item $x$ è persistente in $\mathbb{R}^3_+$ per il sistema con predatore specialista (1.12), dunque non esistono condizioni tali per cui la specie $x$ si estingua. Analogamente, essendo $z$ persistente in $\mathbb{R}^3_+$ per il sistema con predatore generalista (1.13), non esistono casi in cui $z$ si estingua.
+\item Da quanto visto in precedenza, so che se $d_1>1$ allora $ \lim_{\tau \to \infty} y(\tau)=0 $, cioè $y$ si estingue in tempi lunghi in entrambi i sistemi. 
+    \item Per il sistema (1.12), $y$ è persistente $\iff d_1<min[1,d_2]$ quindi se \ $d_2<min[d_1,1]$, $y$ si estingue.
+    \item Per il sistema (1.13), $x$ è persistente $\iff a_3<a_4$, dunque se $a_3>a_4$, la specie $x$ si estingue. Poichè $x$ è l'unica fonte di sopravvivenza per il predatore IG $y$, se $a_3>a_4$, anche la specie $y$ si estingue. (Avevo trovato, infatti, che se $a_3>a_4$, l'equilibrio $E_4=\left(0,0, \dfrac{a_3}{a_4}\right)$ risulta globalmente asintoticamente stabile).
+
+    %da aggiungere pezzo sul quaderno che non capisco perchè si fa
+
+    \item Per il sistema (1.12), so che se $d_2>1+a_2$, allora $\lim_{\tau \to \infty} z(\tau)=0 $, cioè $z$ si estingue. 
+
+    \item Infine, per il sistema (1.12), so che se $d_1,d_2>1$ allora $E_2=(1,0,0)$ risulta globalmente asintoticamente stabile, quindi in questo caso $y$ e $z$ si estinguono contemporaneamente.
+    
+
+\end{itemize}
+
+\vspace{1cm}
+\noindent
+In Figura \ref{diagrammabiforcazione2.12} e Figura \ref{diagrammabiforcazione2.13} si riportano i diagrammi di biforcazione per i sistemi (1.12) e (1.13). I parametri di biforcazione utilizzati per il sistema con predatore specialista sono i parametri $d_1$ e $d_2$, che includono i tassi di morte della preda IG $y$ e del predatore IG $z$.\\ Per il sistema con predatore generalista utilizzo invece $a_3$ ed $a_4$, quindi in questo caso le variazioni qualitative e topologiche del sistema dipendono dalla disponibilità di risorse esterne. 
+
+\vspace{1cm}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{diagramma1vuoto.png}
+\caption{Diagramma di biforcazione per il sistema (1.12) \\
+\noindent
+Si osservi che nella regione compresa tra la retta $d_2=d_1$ e \\ $d_2=d_1+\dfrac{a_2(1-d_1)^2}{(d_1-1)^2+\beta^2}$ i parametri $d_1$ e $d_2$ verificano le condizioni sufficienti di permanenza del sistema. Per $d_2<d_1$ e $d_2<1$ esiste l'equilibrio $E_4$ ed è l'unico a risultare localmente asintoticamente stabile. Nel caso in cui $d_1>1$, $E_4$ è globalmente asintoticamente stabile. Invece se $d_2>d_1+\dfrac{a_2(1-d_1)^2}{(d_1-1)^2+\beta^2}$ con $d_1<1$, è l'equilibrio $E_3$ ad essere localmente asintoticamente stabile, e nel caso in cui risulti anche $d_2>1+a_2$, $E_4$ risulta globalmente stabile. Infine, per $d_1,d_2>1$ l'equilibrio $E_1=(1,0,0)$ è globalmente stabile.}
+\label{diagrammabiforcazione2.12}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{diagramma2vuoto.png}
+\caption{Diagramma di biforcazione per il sistema (1.13) \\
+Si osservi che per $a_4>\dfrac{a_3+d_1}{1-d_1}$ e $a_3<a_4$, i parametri verificano le condizioni di permanenza del sistema. Per $a_4>a_3$, la specie $x$ risulta persistente e se $d_1>1$ l'equilibrio $E_5$ è in questo caso globalmente stabile. Invece nel caso in cui $a_3>a_4$ il sistema ha stabilità globale in $E_4$.}
+\label{diagrammabiforcazione2.13}
+\end{figure}
+
+\clearpage
+\section{Attrattori multipli}
+
+\begin{theorem}
+    \label{thm:attrattorimultipli}
+\end{theorem}\\
+
+\noindent
+In questa sezione ci concentriamo sui possibili casi di bistabilità, cioè se, e sotto quali condizioni, i sistemi (1.12) e (1.13), possono avere più equilibri interni, nei seguenti casi:\\
+
+\begin{itemize}
+    \item[1.] Quando entrambi i sistemi sono permanenti 
+    \item[2.] Quando (1.12) ha stabilità locale in $E_3=(d_1,1-d_1,0) $ o quando (1.13) ha stabilità locale in $ E_5=\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right) $
+\end{itemize}
+
+\noindent
+Intanto per il sistema (1.12), se $(x^*,y^*,z^*)$ è un punto di equilibrio interno, in quanto tale avrò: $x^* \neq 0,y^*\neq 0$ e $z^*\neq 0$ e:\\
+
+
+
+
+\begin{equation}
+\begin{cases}
+f_1 =  x^*(1-x^*-y^*-z^*)=0 & \text{(1)} \\[5pt]
+f_2= \gamma_1 y^* (x^*- \dfrac{a_1y^*z^*}{y^{*^2}+\beta^2} - d_1)=0  & \text{(2)}\\[5pt]
+f_3=\gamma_2 z^* (x^*+ \dfrac{a_2y^{*^2}}{y^{*^2}+\beta^2} -  d_2)=0 & \text{(3)}\\
+\end{cases}
+\end{equation}
+\\
+
+\vspace{0.6cm}
+\noindent 
+Da (1) ottengo: $1-x^*-y^*-z^*=0$ \\
+
+\noindent
+Da (2) ottengo: $\dfrac{y^*z^*}{y^{*^2}+\beta^2} = \dfrac{x^*-d_1}{a_1} $ \\
+
+\noindent
+Da (3) ottengo: $ \dfrac{y^{*^2}}{y^{*^2}+\beta^2} = \dfrac{d_2-x^*}{a_2} $, quindi ricavando $y^*$: 
+$y^*=\sqrt{\dfrac{\beta^2(d_2-x^*)}{a_2+x^*-d_2}}$ \\
+
+\vspace{0.7cm}
+\noindent
+Affinchè (2) e (3) siano ben definite, dev'essere: $x^*>d_1$ e $d_2-a_2<x^*<d_2  \Longrightarrow 
+ max[d_1,d_2-a_2]<x^*<d_2 $ \\
+
+\vspace{0.6cm}
+\noindent
+Da (2) ricavo $z^*$ e vi sostituisco l'espressione di $x^*$: \\
+$z^*=\dfrac{(x^*-d_1)a_2\beta}{a_1\sqrt{(d_2-x^*)(x^*+a_2-d_2)}}$\\
+
+\vspace{0.7cm}
+\noindent
+Da (1), sostituendo $y^*$ e $z^*$, poichè $\limsup_{\tau \to \infty} x(\tau)=1 $ dovrà essere: \\
+
+\noindent
+$\dfrac{a_1(1-x^*)\sqrt{(x^*+a_2-d_2)(d_2-x^*)}}{\beta}= a_1d_2-a_2d_1-(a_1-a_2)x^* >0 \Longrightarrow
+\vspace{0.6cm}
+ x^*<\dfrac{a_1d_2-a_2d_1}{a_1-a_2} $ \\
+
+
+ \noindent
+ Quindi l'ascissa $x^*$ del punto di equilibrio deve soddisfare : \\
+\noindent
+\begin{equation}
+    \label{eq:restrizioni}
+ max\left[d_1,d_2-a_2\right]<x^*<min\left[d_2,\dfrac{a_1d_2-a_2-d_1}{a_1-a_2}\right], con \dfrac{a_1d_2-a_2d_1}{a_1-a_2}>0  \\  
+\end{equation}
+
+\vspace{0.7cm}
+\noindent
+Posto $g_1=\dfrac{a_1(1-x)\sqrt{(x+a_2-d_2)(d_2-x)}}{\beta}$   e  
+$g_2=a_1d_2-a_2d_1-(a_1-a_2)x $ \\
+
+\noindent
+dove $g_1$ è una funzione convessa, mentre $g_2$ è una retta, $x^*$ è l'intersezione di $g_1$ e $g_2$ nel primo quadrante.\\
+
+
+\vspace{0.8cm}
+\noindent
+Classifico i possibili scenari nelle seguenti categorie:
+\begin{itemize}
+    \item Non ci sono punti di equilibrio nel caso in cui $g_1$ e $g_2$ si intersecano, ma non sono rispettate le restrizioni \eqref{eq:restrizioni} sopra elencate.
+      \begin{itemize}
+          \item Se $d_1>d_2$ e $a_1>a_2>d_2$, con $d_2>1 \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2$, $g_1$ e $g_2$ si intersecano in un punto, come mostrato in Figura \ref{fig:1a}, ma poichè non risulta $d_2>d_1$, si esclude.
+          \item Analogamente questo accade se $d_1>d_2$ e $min[a_1,d_2]>a_2$, con $d_2>1 \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2<d_1$, come in Figura \ref{fig:1b}.
+          \item Se $d_2>d_1$ e $a_2>max[a_1,d_2]$  con $d_1>1 \longrightarrow \\
+          0<\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_1$, $g_1$ e $g_2$ si intersecano in un punto, di ascissa $x^*$, ma poichè risulta $x^*<d_1$, anche questo punto si deve escludere. Si veda Figura \ref{fig:1c}.
+        \item Per lo stesso motivo, escludo il punto di intersezione nel caso in cui $d_2>d_1$ e $a_2>max[a_1,d_2]$, con $d_1<1 \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}<0 $, illustrato in Figura \ref{fig:1d}.  
+
+          \item Se $d_2>d_1$ e $d_2>a_2>a_1$, con $d_1>1  \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_1 $. Distinguendo i casi in cui $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2-a_2 $, mostrato in Figura \ref{fig:1e}, con un'intersezione di ascissa $x^*$ da escludere poichè tale che $x^*<d_1$, oppure $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2-a_2 $, come in Figura \ref{fig:1f}, con due intersezioni, di ascisse $x_1^*$ e $x_2^*$, da escludere, poichè $x_1^*<d_1$ e $x_2^*<d_1$.
+          \item Se $d_2>a_2>a_1$ e $d_1<d_2$, quando $g_1(d_1)>g_2(d_1)$, nel caso particolare in cui $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2-a_2$, come in Figura \ref{fig:3e}, ma è da escludere poichè non rispetterebbe le restrizioni \eqref{eq:restrizioni}.
+          \item Se $d_2>a_2>a_1$ e $d_1<d_2$, quando $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_1<d_2-a_2$, ma si esclude poichè non viene rispettata \eqref{eq:restrizioni}. Si veda Figura \ref{fig:4c}.\\
+
+       \end{itemize}
+\end{itemize}
+
+\noindent
+
+
+\noindent
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1avuoto.png}
+\caption{}
+\label{fig:1a}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1bvuoto.png}
+\caption{}
+\label{fig:1b}
+\end{figure}
+
+
+\noindent
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1cvuoto.png}
+\caption{}
+\label{fig:1c}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1dvuoto.png}
+\caption{}
+\label{fig:1d}
+\end{figure}
+       
+\noindent
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1evuoto.png}
+\caption{}
+\label{fig:1e}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{1fvuoto.png}
+\caption{}
+\label{fig:1f}
+\end{figure}       
+       
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3evuoto.png}
+\caption{}
+\label{fig:3e}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{4cvuoto.png}
+\caption{}
+\label{fig:4c}
+\end{figure}
+
+\newpage
+       \vspace{3cm}
+       \begin{itemize}
+    \item Non ci sono punti di equilibrio neanche nei casi in cui $g_1$ e $g_2$ non si intersecano, dunque:
+    \begin{itemize}
+    \item Se $a_1>a_2>d_2$ e $d_1<d_2$ quando $g_2(x)>g_1(x) \ \forall x \in (d_2-a_2,d_2)  \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2$, come illustrato in Figura \ref{fig:2a}.
+    \item Se $min[a_1,d_2]>a_2$ e $d_1<d_2$ $\longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2$, come illustrato in Figura \ref{fig:2b}.
+    \item Se $d_2>a_2>a_1$ e $d_1<d_2$ $ \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2$, come illustrato in Figura \ref{fig:2c}.
+    \item Se $max[a_1,d_2]<a_2$ e $d_1<d_2 \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2$, come illustrato in Figura \ref{fig:2cbis}.
+    \item Se $a_2>a_1$ e $d_1<d_2$ $ \longrightarrow \dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2-a_2$, distinguendo i casi in cui $d_2-a_2>0$, raffigurato in Figura \ref{fig:2d}, e $d_2-a_2<0 $, mostrato in Figura \ref{fig:2e}.
+    
+\end{itemize}
+\end{itemize}\\
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{2avuoto.png}
+\caption{}
+\label{fig:2a}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{2bvuoto.png}
+\caption{}
+\label{fig:2b}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{2cvuoto.png}
+\caption{}
+\label{fig:2c}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{duecbisvuoto.png}
+\caption{}
+\label{fig:2cbis}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{2dvuoto.png}
+\caption{}
+\label{fig:2d}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{dueevuoto.png}
+\caption{}
+\label{fig:2e}
+\end{figure}
+
+
+
+\newpage
+\begin{itemize}
+    \item Ci potrebbe essere un unico punto di equilibrio :
+    \begin{itemize}
+    \item Se $max[a_1,d_2]<a_2$ e $d_1<d_2$, quando $g_1(d_1)>g_2(d_1)$ e \\ $d_2-a_2<\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<d_2$, distinguendo i casi in cui \\$\dfrac{a_1d_2-a_2d_1}{a_1-a_2}<0$, illustrato in Figura \ref{fig:3a} e \\ $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}>0$, in Figura \ref{fig:3b} . %giusto
+        \item Se $a_1>a_2>d_2$ e $d_1<d_2$, quando $g_1(d_1)>g_2(d_1)$ e \\ $d_2<\dfrac{a_1d_2-a_2d_1}{a_1-a_2}$, come in Figura \ref{fig:3c}. %giusto
+        \item Se $min[a_1,d_2]>a_2$ e $d_1<d_2$, quando $g_1(d_1)>g_2(d_1)$ e \\$d_2<\dfrac{a_1d_2-a_2d_1}{a_1-a_2}$, illustrato in Figura \ref{fig:3d}. %giusto
+        \item Se $d_2>a_2>a_1$ e $d_1<d_2$, quando $g_1(d_1)>g_2(d_1)$, nel caso in cui $\dfrac{a_1d_2-a_2d_1}{a_1-a_2}>d_2-a_2$, come mostrato in Figura \ref{fig:3f}.\\
+        \end{itemize}
+\end{itemize}\\
+
+\noindent
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3avuoto.png}
+\caption{}
+\label{fig:3a}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3bvuoto.png}
+\caption{}
+\label{fig:3b}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3cvuoto.png}
+\caption{}
+\label{fig:3c}
+\end{figure}
+
+%la tolgo qua perchè l'ho messa nel caso 0 equilibri
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.9\textwidth]{3dvuoto.png}
+%\caption{}
+%\label{fig:3d}
+%\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3dvuoto.png}
+\caption{}
+\label{fig:3d}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{3fvuoto.png}
+\caption{}
+\label{fig:3f}
+\end{figure}
+
+
+\newpage
+\\
+\newpage
+\vspace{10cm}
+\begin{itemize}
+      \item Potrebbero esserci due equilibri distinti nei casi:
+      \begin{itemize}
+          \item Se $a_1>a_2$, $d_2>a_2$ e $d_1<d_2$, quando $\exists x_0 \in (d_2-a_2,d_2) : g_1(x_0)>g_2(x_0)$ e $d_2-a_2<d_1<\dfrac{a_1d_2-a_2d_1}{a_1-a_2} $, come illustrato in Figura \ref{fig:4a}.  %giusto
+          \item Se $min[a_1,d_2]>a_2$ e $d_1<d_2$, quando 
+           \\ $d_1+a_2<d_2<\dfrac{a_1d_2-a_2d_1}{a_1-a_2}$, come in Figura \ref{fig:4b}. %gisuto
+         % lo tolgo perchè lo metto nel primo caso senza equilibri \item Se $d_2>a_2>a_1$ e $d_1<d_2$, quando $\frac{a_1d_2-a_2d_1}{a_1-a_2}<d_1<d_2-a_2, \ \mathbf{(4.c)}$, ma si esclude poichè non vengono rispettate le restrizioni.
+      \end{itemize}\\
+ \end{itemize}  
+\noindent
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{4avuoto.png}
+\caption{}
+\label{fig:4a}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{4bvuoto.png}
+\caption{}
+\label{fig:4b}
+\end{figure}
+
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.9\textwidth]{4cvuoto.png}
+%\caption{}
+%\label{fig:4c}
+%\end{figure}
+            
+
+\clearpage
+\noindent
+Riassumo i risultati trovati nella seguente tabella:\\
+
+\vspace{0.8cm}
+\begin{table}[H]
+\begin{tabular}{ |p{2cm}|p{9cm}|  }
+\hline
+\multicolumn{2}{|c|}{Condizioni sufficienti per equilibri del sistema (1.12)} \\
+\hline
+Numero di equilibri & Condizioni  \\
+\hline
+0 & \begin{itemize} 
+\item $d_1>d_2$ \ 
+\item $a_1>a_2$, $d_2>d_1$, $ d_2<\frac{a_1d_2-a_2d_1}{a_1-a_2}$ quando $g_2(x)>g_1(x) \ \forall x \in (d_2-a_2,d_2)$
+\item$a_2>a_1$, $d_2>d_1$, $ \frac{a_1d_2-a_2d_1}{a_1-a_2}<d_1$ con $g_1(d_1)<g_2(d_1)$
+\item $a_2>a_1$, $d_2>d_1$, quando $ d_2<\frac{a_1d_2-a_2d_1}{a_1-a_2}$, oppure quando $\frac{a_1d_2-a_2d_1}{a_1-a_2}<d_2-a_2 $
+
+\end{itemize} \\
+1 & \begin{itemize}
+    \item $a_2>a_1$, $d_2>d_1$, con $ \frac{a_1d_2-a_2d_1}{a_1-a_2}<d_1$ e $g_1(d_1)>g_2(d_1)$
+    \item $a_1>a_2$, $d_2>d_1$, con $d_2<\frac{a_1d_2-a_2d_1}{a_1-a_2}$ e $g_1(d_1)>g_2(d_1)$
+\end{itemize}  \\
+2 & \begin{itemize}
+    \item $a_1>a_2$, $d_2>d_1$, con $d_2<\frac{a_1d_2-a_2d_1}{a_1-a_2}$ e inoltre $\exists x_0 \in (d_2-a_2,d_2) : g_1(x_0)>g_2(x_0)$ e $d_2-a_2<d_1<\frac{a_1d_2-a_2d_1}{a_1-a_2}$
+\end{itemize}  \\
+
+\hline
+\end{tabular}
+\caption{Predatore specialista: condizioni sufficienti per l'esistenza di equilibri interni}
+  \label{tab:numeroequilibrispecialista}
+\end{table}
+
+\newpage
+
+\noindent
+Per il sistema (1.13), analogamente, se $(x^*,y^*,z^*)$ è un punto di equilibrio interno, in quanto tale avrò: $x^* \neq 0, y^* \neq 0, z^* \neq 0$ e:\\
+
+$
+\begin{cases}
+f_1 =  x^*(1-x^*-y^*-z^*)=0 & \text{(1)} \\[5pt]
+f_2= \gamma_1 y^* (x^*- \dfrac{a_1y^*z^*}{y^{*^2}+\beta^2} - d_1)=0 & \text{(2)} \\[5pt]
+f_3=\gamma_2 z^* (a_3-a_4z^*+x^* + \dfrac{a_2y^{*^2}}{y^{*^2}+\beta^2})=0 & \text{(3)}\\
+
+\end{cases}
+$\\
+
+\vspace{1cm}
+\noindent 
+Da (1) ottengo: $1-x^*-y^*-z^*=0$ \\
+
+\noindent
+Da (2), deduco debba essere: $x^*>d_1$ e sostituendo l'espressione di $x^*$, $z^*=\dfrac{(1-d_1-y^*)((y^*)^2+\beta^2)}{(y^{*^2}+\beta^2)+a_1y^*}$ quindi $y^*<1-d_1 $.\\
+
+\noindent
+Da (3) deduco: $ z^*>\dfrac{a_3}{a_4} $ e ricavo:  
+$z^*=\dfrac{(1+a_3-y^*+a_2)(y^{*^2}+\beta^2)-a_2\beta^2}{(1+a_4)(y^{*^2}+\beta^2)}$ \\
+
+\vspace{0.6cm}
+\noindent
+Eguagliando le due espressioni:\\
+
+$1-d_1-y^*=\dfrac{[(1+a_3-y^*+a_2)(y^{*^2}+\beta^2)-a_2\beta^2][y^{*^2}+\beta^2+a_1y^*]}{(1+a_4)(y^{*^2}+\beta^2)^2} $\\
+
+\vspace{0.6cm}
+\noindent
+Definendo:\\
+
+\noindent
+$g_1=1-d_1-y$\\
+
+\noindent
+$g_2=\dfrac{[(1+a_3-y+a_2)(y^2+\beta^2)-a_2\beta^2][((1+a_4)(y^2+\beta^2+a_1y)]}{(1+a_4)(y^2+\beta^2)^2}$\\
+
+\vspace{0.6cm}
+\noindent
+I punti di equilibrio saranno le intersezioni di $g_1$ e $g_2$ nel primo quadrante.\\
+
+\vspace{0.6cm}
+\noindent
+Osservazioni per la funzione $g_2$:
+\begin{itemize}
+\item $g_2$ ha esattamente una sola intersezione $(y^0,0)$ con l'asse $x$.
+\item $g_2(1)=\dfrac{((a_3+a_2)(1+\beta^2)-a_2\beta^2)(1+\beta^2+a_1)}{(1+a_4)(1+\beta^2)^2}>0 $
+\item $g_2(1+a_2+a_3)=\dfrac{(-a_2\beta^2) [(1+a_2+a_3)^2+\beta^2+a_1(1+a_2+a_3)]}{(1+a_4)((1+a_2+a_3)^2+\beta^2)^2} <0    $
+\end{itemize}
+Essendo $g_2$ una funzione continua, dal teorema di esistenza degli zeri, l'intersezione $y^0$ deve soddisfare: \\
+
+\noindent
+$1-d_1<1<y^0<1+a_2+a_3$\\
+
+\vspace{0.6cm}
+\noindent
+Osservazioni per la funzione $g_1$:
+\begin{itemize}
+\item $g_1(0)=1-d_1$
+\item $g_2(0)=\dfrac{1+a_3}{1+a_4}=1-\dfrac{a_4-a_3}{1+a_4}$
+\end{itemize}
+
+\vspace{2cm}
+\noindent
+Nel caso in cui $g_1(0)>g_2(0)$, cioè se $d_1<\dfrac{a_4-a_3}{1+a_4}$, con $a_4>a_3 $, dagli studi nelle sezioni precedenti (Teorema \ref{thm:persistenza3specie}) so che il sistema (1.13) è permanente.\\
+
+\noindent
+Poichè $g_2(1-d_1)>0>g_1(1-d_1)=0$, deduco che il sistema (1.13) può avere un'unico punto di equilibrio, come nel caso mostrato in Figura \ref{fig:secondocaso1}, o tre punti di equilibri, come in Figura \ref{fig:secondocaso2}.\\
+
+%ichiedendo infatti che tutti i parametri considerati siano strettamente positivi, non esistono casi in cui $g_1$ e $g_2$ si intersechino 0,2,4 o più volte.
+
+\vspace{1cm}
+
+\noindent
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{secondocaso1vuoto.png}
+\caption{}
+\label{fig:secondocaso1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{secondocaso2vuoto.png}
+\caption{}
+\label{fig:secondocaso2}
+\end{figure}
+
+
+
+\vspace{8cm}
+\noindent \\
+\\
+\\
+\\
+Invece, se $g_1(0)<g_2(0)$, cioè se $d_1>\dfrac{a_4-a_3}{1+a_4}$, con $a_4>a_3$, dallo studio degli equilibri fatto in precedenza (Sezione 2.2.1), so che il sistema (1.13) è localmente asintoticamente stabile in $E_5=\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right). $\\
+
+\noindent
+Poichè $g_2(1-d_1)>0>g_1(1-d_1)=0$, analogamente a prima, deduco che (1.13) può non avere punti di equilibrio, come nel caso illustrato in Figura \ref{fig:secondocaso3}, o due punti di equilibri, come in Figura \ref{fig:secondocaso4}.\\
+
+\vspace{1cm}
+\noindent
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{secondocaso3vuoto.png}
+\caption{}
+\label{fig:secondocaso3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{secondocaso4vuoto.png}
+\caption{}
+\label{fig:secondocaso4}
+\end{figure}
+
+
+
+
+
+\clearpage
+\vspace{1cm}\\
+\noindent
+Posto $g_1(y_c)=max[g_1(y)]$ al variare di $y \in [0,1+a_2+a_3]$ e \\
+$g_2(y_c)=max[g_2(y)]$ al variare di $y \in [0,1+a_2+a_3]$,\\
+
+\noindent
+riassumo i risultati trovati nella seguente tabella: \\
+
+\begin{table}[H]
+\begin{tabular}{ |p{2cm}|p{9cm}|  }
+\hline
+\multicolumn{2}{|c|}{Condizioni sufficienti per equilibri del sistema (1.13)} \\
+\hline
+Numero di equilibri & Condizioni  \\
+\hline
+0 & \begin{itemize} 
+\item $a_3>a_4$ \ 
+\item $a_4>a_3$ e $d_1>\frac{a_4-a_3}{1+a_4}$, quando $g_2(y)>g_1(y) \ \forall y \in (0,1-d_1)$
+\end{itemize} \\
+1 & \begin{itemize}
+    \item $a_4>a_3$ e $d_1<\frac{a_4-a_3}{1+a_4}$, quando $g_2(y_c)<g_1(y_c)$
+\end{itemize}  \\
+2 & \begin{itemize}
+    \item $a_4>a_3$, $d_1>\frac{a_4-a_3}{1+a_4}$ quando $g_2(y_c)>g_1(y_c)$ e $\exists \ y \in (y_c,y^0) : g_2(y)<g_1(y)$
+\end{itemize}  \\
+3 & \begin{itemize}
+\item $a_4>a_3$, $d_1<\frac{a_4-a_3}{1+a_4}$ quando $g_2(y_c)>g_1(y_c)$ 
+\end{itemize}\\
+
+\hline
+\end{tabular}
+\caption{Predatore generalista: condizioni sufficienti per l'esistenza di equilibri interni}
+  \label{tab:numeroequilibrigeneralista}
+\end{table}
+
+
+\newpage
+
+\section{Simulazioni numeriche}
+
+\noindent Oltre ai casi di bistabilità fra punti di equilibrio, mostro altre due dinamiche particolari per il sistema con predatore specialista (1.12):\\
+
+\noindent La prima, quando (1.12) è permanente in $\mathbb{R}^3_+$, cioè quando $d_1+\dfrac{a_2(d_1-1)^2}{(d_1-1)^2+\beta^2} > d_2 > d_1 $ e $d_2<1$, come mostrato in Figura \ref{fig:simulazione1}.\\
+\noindent
+Si osservi dunque che in questo caso, il sistema (1.12) ha due attrattori di cui uno è un equilibrio interno localmente stabile, mentre l'altro è un ciclo limite. 
+%\noindent
+%Considero i seguenti parametri: \\
+%$\gamma_1=25$, $\gamma_2=1$, $\beta=0.1$, $a_1=1$, %$a_2=0.6$, $d_1=0.15$, $d_2=0.54 $ con dati iniziali %$x(0)=0.4$, $y(0)=0.2$, $z(0)=0.05$, e poi $z(0)=0.5$
+
+\vspace{1cm}
+\begin{minpage}
+\centering
+\label{fig:simulazione1}
+\includegraphics[width=14cm]{figdieci.png}
+\captionof{figure}{Dinamica del sistema (1.12), nel caso di permanenza, assumendo: \\
+$\gamma_1=25$, $\gamma_2=1$, $\beta=0.1$, $a_1=1$, $a_2=0.6$, $d_1=0.15$, $d_2=0.54 $ con dati iniziali $x(0)=0.4$, $y(0)=0.2$, $z(0)=0.05$, e poi $z(0)=0.5$}
+\label{fig:simulazione1}
+\end{minpage}
+\vspace{1cm}
+
+\clearpage
+\noindent
+La seconda dinamica considerata per (1.12) è quando il sistema è localmente asintoticamente stabile in $E_3=(d_1,1-d_1,0)$. Si veda Figura \ref{fig:simulazione2}.\\
+Si osservi che il sistema (1.12) risulta avere in $E_3=(d_1,1-d_1,0)$ un equilibrio al contorno localmente asintoticamente stabile, in accordo agli studi fatti in precedenza. Inoltre la simulazione mostra che esiste un altro attrattore, anch'esso un equilibrio interno localmente stabile.
+
+
+\vspace{1cm}
+\begin{minpage}
+\centering
+\label{fig:simulazione2}
+    \includegraphics[width=14cm]{figundici.png}
+    \captionof{figure}{Dinamica del sistema (1.12), nel caso di permanenza, assumendo: \\
+$\gamma_1=25$, $\gamma_2=1$, $\beta=0.1$, $a_1=1$, $a_2=0.01$, $d_1=0.15$, $d_2=0.54 $ con dati iniziali $x(0)=0.4$, $y(0)=0.2$, $z(0)=0.05$, e poi $z(0)=0.5$.
+}
+
+\label{fig:simulazione2}
+\end{minpage}
+\vspace{2cm}
+
+\vspace{2cm}
+
+\noindent
+
+\newpage
+\noindent
+Per il sistema (1.13), invece, considero il caso in cui il sistema è permanente, cioè, come raffigurato in Figura \ref{fig:simulazione3}, quando $a_3<a_4$ e $\dfrac{a_4-a_3}{a_4+1}>d_1$.\\
+Dalle simulazioni numeriche, si può vedere anche il sistema (1.13) ha la possibilità di avere due attrattori, di cui uno è un equilibrio interno localmente stabile, mentre l'altro è un ciclo limite.
+
+
+\vspace{1cm}
+\begin{minpage}
+\centering
+\label{fig:simulazione3}
+    \includegraphics[width=14cm]{figdodici.png}
+    \captionof{figure}{Dinamica del sistema (1.13), nel caso di permanenza, assumendo: \\
+$\gamma_1=25$, $\gamma_2=1$, $\beta=0.1$, $a_1=1$, $a_2=0.01$, $a_3=0.1$, $a_4=4.5$ $d_1=0.15$ con dati iniziali $x(0)=0.4$, $y(0)=0.1$, $z(0)=0.05$ e poi $z(0)=0.5$.}
+    \label{fig:simulazione3}
+\end{minpage}
+\vspace{2cm}
+
+
+
+\newpage
+
+\chapter{Conclusioni}
+\section{Confronto con il modello di Holt e Polis}
+In questa sezione evidenzieremo le differenze tra la dinamica del sistema \eqref{eq:holtepolisridimensionato}, studiato da Holt e Polis in \cite{2}, riassunti brevemente nel primo capitolo, e i risultati ottenuti nelle sezioni precedenti dall'analisi del sistema (1.12) con predatore specialista.
+
+\begin{itemize}
+    \item \textbf{Stati stabili alternativi} \\
+    \noindent
+    Holt e Polis mostrarono che gli unici possibili attrattori multipli per il loro modello, sono gli equilibri localmente stabili $E_{x,y}=(d_1,1-d_1,0)$ e $E_{x,z}=(d_2,0,1-d_2)$, dunque due equilibri di bordo. \\
+    Invece il sistema IGP (1.12) con predatore specialista, come dimostrato, non può avere attrattori multipli quando $E_4=(d_2,0,1-d_2)$ è localmente stabile. Inoltre, come mostrato attraverso le simulazioni numeriche, Figura \ref{fig:simulazione1} e Figura \ref{fig:simulazione2}, può avere come attrattori multipli due equilibri interni, ma anche un equilibrio interno e $E_3=(d_1,1-d_1,0)$, equilibrio di bordo.\\ 
+    La differenza può essere dovuta al fatto che la risposta funzionale Holling di tipo III tra preda IG e predatore IG in (1.12) amplia il ventaglio delle dinamiche possibili, addirittura si rileva la presenza di cicli limite stabili. Nella sezione successiva analizzeremo appositamente un caso limite, con tasso di mortalità inflitto dal predatore IG alla preda IG costante, per capire, effettivamente, quanto la diversa risposta funzionale possa influenzare, e in che modo, le dinamiche di un certo sistema.
+
+\item \textbf{Coesistenza}\\
+\noindent
+Holt e Polis mostrarono che per avere coesistenza, la preda IG deve essere un concorrente superiore al predatore IG nella competizione di sfruttamento delle risorse. Come già preannunciato, questo si trova in accordo con la regola $R^*$ \cite{7}, che vale anche per modelli più generali.\\
+Anche nel nostro caso, infatti: \\
+\noindent
+Sono presenti due equilibri di bordo non banali dati da $E_3=(d_1,1-d_1,0)$ e $E_4=(d_2,0,1-d_2)$, e $y$ persiste $\iff d_1<min[1,d_2]$,
+cioè $y$ è la specie che persiste al livello più basso della risorsa condivisa, dunque il concorrente sfruttatore superiore.\\
+
+\noindent
+Osserviamo che questo vale anche nel caso con predatore generalista, in cui infatti due equilibri di bordo non banali sono: $E_3=(d_1,1-d_1,0)$ e $E_5=\left(\dfrac{a_4-a_3}{a_4+1},0,\dfrac{1+a_3}{a_4+1}\right)$ e $y$ persiste $\iff d_1<\dfrac{a_4-a_3}{a_4+1}$.\\
+\noindent 
+
+Un'altra grande differenza tra i modelli, è che il sistema (1.12) può avere sia attrattori di confine che interni, sotto determinate condizioni, mentre Hold e Polis, nel loro studio, mostrarono che l'esistenza di un attrattore interno portava alla permanenza del sistema.
+\end{itemize}
+
+\vspace{2cm}
+Riassumo di seguito i risultati ottenuti dalle analisi teoriche e numeriche.
+\begin{itemize}
+
+\item Nella sezione 2.4.3, avevo ottenuto che il sistema (1.12), con predatore specialista,
+\noindent
+
+è permanente in $\mathbb{R}^3_+ \iff d_1+\dfrac{a_2(d_1-1)^2}{(d_1-1)^2+\beta^2} > d_2 > d_1 $ e $d_2<1$\\
+
+\noindent
+ovvero, la permanenza è controllata da $d_1$ e $d_2$, che includono i tassi di morte della preda IG e del predatore IG, rispettivamente.\\
+
+\noindent
+Per il sistema con predatore generalista, avevo trovato che (1.13)\\
+
+è permanente in $\mathbb{R}^3_+ \iff y$ è persistente $\iff a_3 < a_4 $ e $\dfrac{a_4-a_3}{a_4+1}>d_1$ \\
+
+\noindent
+quindi in questo caso la permanenza dipende dalla disponibilità di risorse esterne, tramite i parametri $a_3$ e $a_4$.
+
+\item Come osservato precedentemente, la persistenza della specie $y$ richiede che essa stessa sia un concorrente superiore al predatore IG nella competizione di sfruttamento delle risorse. Tuttavia, nel sistema (1.13), con predatore generalista, la persistenza di $y$ comporta la permanenza del sistema. 
+\\Invece nel caso (1.12), con predatore specialista, se $y$ persiste, il sistema può risultare permanente, ma anche esibire un attrattore di confine o interno. 
+
+\item Osservando i diagrammi di biforcazione \ref{diagrammabiforcazione2.12} e \ref{diagrammabiforcazione2.13}, posso dedurre che il sistema (1.13) ha una regione di permanenza molto più vasta, rispetto che il sistema (1.12). Inoltre le simulazioni numeriche \ref{fig:simulazione1}, \ref{fig:simulazione2} e \ref{fig:simulazione3}, mostrano che (1.13) non può avere sia attrattori di bordo che di confine contemporaneamente, al contrario di (1.12). Questi risultati ci portano a concludere che il sistema (1.13) con predatore generalista tende alla coesistenza delle tre specie insieme.
+
+\item Dal confronto con il modello di Holt e Polis, si evince che una risposta funzionale Holling di tipo III tra preda IG e predatore IG porta a dinamiche molto complicate. Per capire effettivamente se questo dipende esclusivamente da una diversa risposta funzionale oppure è legato anche al comportamento del predatore IG all'aumentare della densità della preda IG, verrà ora analizzato un caso limite, in cui il tasso di mortalità inflitto dal predatore IG alla preda IG sia costante.
+\\
+\end{itemize}
+
+\vspace{2cm}
+\section{Caso limite}
+Ponendo $\beta=0$, il sistema (1.12) con predatore specialista diventa:
+\begin{equation}
+\label{eq:sistemacasolimite}
+{$
+\begin{cases}
+\dot{x}=  x(1-x-y-z)  \\[2pt]
+\dot{y}= \gamma_1 y (x- d_1)-\gamma_1a_1z \\[2pt]
+\dot{z}= \gamma_2 z (x+a_2 - d_2)\\
+\end{cases}
+$}
+\end{equation}\\
+
+
+\vspace{0.7cm}
+\noindent
+Annullando le componenti del campo vettoriale associato al sistema, trovo i seguenti possibili equilibri:
+
+\vspace{0.5cm}
+\noindent
+\begin{itemize}
+\item $E_1=(0,0,0) $
+\item $E_2=(1,0,0) $
+\item $E_3=(d_1,1-d_1,0)$, che è ammissibile solamente nel caso in cui $d_1<1$.
+\item $E_4=(d_2-a_2,0,1-d_2+a_2)$,  che è ammissibile solamente nel caso in cui $d_2>a_2$ e $d_2-a_2<1$.
+\item $E_5=\left(d_2-a_2,\dfrac{a_1-a_1d_2+a_1a_2}{a_1-d_1+d_2-a_2},\dfrac{-(d_2-a_2)^2+(1+d_1)(d_2-a_2)-d_1}{a_1-d_1+d_2-a_2}\right)$, \\
+
+che è ammissibile solamente nel caso in cui $1+a_2>d_2>a_2+d_1$.
+
+\end{itemize}\\
+
+\vspace{0.7cm}
+\noindent
+Per valutare la stabilità di ciascun equilibrio utilizzo il primo metodo di linearizzazione di Liapunov. 
+Determino la matrice Jacobiana del campo vettoriale associato al sistema:
+\begin{equation}
+\nonumber
+J(x,y,z)
+= 
+\scalebox{1}{$
+\begin{pmatrix}
+&1-2x-y-z \    &-x \ &-x  \\
+&\gamma_1y \ &\gamma_1(x-d_1) \ &-a_1\gamma_1 \\
+&\gamma_2z \ & 0 \ &\gamma_2(x-d_2+a_2)
+\end{pmatrix} \\
+$}
+\end{equation}\\
+
+\vspace{0.7cm}
+\noindent
+
+\begin{itemize}
+    \item Lo jacobiano valutato in $ E_{1}=(0,0,0) $ risulta:
+\\
+
+$J(0,0,0)=   \begin{pmatrix}
+1 & 0 & 0 \\
+0 & -\gamma_1d_1 & -a_1\gamma_1 \\
+0 & 0 & \gamma_2(a_2-d_2) \\
+\end{pmatrix} $   \\
+
+ed è una matrice diagonale con autovalori: \\
+$1>0,  \quad -\gamma_1d_1<0 \quad$ e $\quad \gamma_2(a_2-d_2)<0 \iff a_2<d_2$
+
+
+dunque dal I Teorema di Liapunov, 
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(0,0,0)\} >0$, \\
+$ E_1 $ risulta sempre instabile ed è localmente un punto sella.\\
+
+\vspace{0.8cm}
+\item Lo jacobiano valutato in $ E_{2}=(1,0,0) $ risulta:
+\\
+
+$J(1,0,0)=   \begin{pmatrix}
+-1 & -1 & -1 \\
+0 & \gamma_1(1-d_1) & -a_1\gamma_1 \\
+0 & 0 & \gamma_2(1+a_2-d_2) \\
+\end{pmatrix} $   \\
+
+ed è una matrice triangolare superiore con autovalori: \\$-1<0, \quad \gamma_1(1-d_1)<0 \iff d_1>1 \quad$ e \\ $  \gamma_2(1+a_2-d_2)<0 \iff 1+a_2<d_2$\\
+
+
+dunque dal I Teorema di Liapunov, 
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(1,0,0)\} <0 \iff d_1>1$ e $d_2>1+a_2$, \\
+$ E_1 $ risulta localmente asintoticamente stabile (nodo localmente) $\iff d_1>1$ e $d_2>1+a_2$.\\
+
+\vspace{0.8cm}
+\item Lo jacobiano valutato in $ E_{3}=(d_1,1-d_1,0) $, ammissibile nel primo ottante solo se $d_1<1$, risulta:
+\\
+
+$J(d_1,1-d_1,0)$=  $ \begin{pmatrix}
+-d_1 & -d_1 & -d_1 \\
+\gamma_1(1-d_1) & 0 & -a_1\gamma_1 \\
+0 & 0 & \gamma_2(d_1+a_2-d_2) \\
+\end{pmatrix} $   \\
+
+
+Calcolando il determinante di $J(d_1,1-d_1,0)-\lambda I$ sviluppando rispetto la terza riga, trovo che $j_{33}$ è un autovalore della matrice jacobiana, e risulta:\\
+
+$j_{33}=\gamma_2(d_1+a_2-d_2)<0 \iff d_2>a_2+d_1$\\
+
+Considero il minore $J_{22}= \begin{pmatrix}
+-d_1 & -d_1 \\
+\gamma_1(1-d_1) & 0 \\
+\end{pmatrix} $   \\
+
+Ne calcolo traccia e determinante: \\
+$Tr(J_{22})=-d_1 <0$\\
+
+$Det(J_{22})=d_1(1-d_1)\gamma_1>0 \iff d_1<1$\\
+
+allora, dal criterio di Routh-Hurwitz per matrici di dimensione 2, trovo che se $d_1<1$ gli altri due autovalori di $J(d_1,1-d_1,0)$ hanno parte reale negativa.
+
+Applicando il I Teorema di Liapunov: $ E_3 $ risulta localmente asintoticamente stabile $\iff d_1<1$ e $ d_2>a_2+d_1$ \\
+
+
+
+\vspace{0.8cm}
+\item Lo jacobiano valutato in $ E_{4}=(d_2-a_2,0,1-d_2+a_2) $, ammissibile nel primo ottante solo se   $d_2>a_2$ e $d_2-a_2<1$, risulta:
+\\
+
+$J(d_2-a_2,0,1-d_2+a_2)$=  $ \begin{pmatrix}
+a_2-d_2 & a_2-d_2 & a_2-d_2 \\
+0 & \gamma_1(d_2-a_2-d_1) & -a_1\gamma_1 \\
+\gamma_2(1-d_2+a_2) & 0 & 0 \\
+\end{pmatrix} $   \\
+
+Calcolando il determinante di $J(d_2-a_2,0,1-d_2+a_2)- \lambda I$ trovo che un autovalore è dato da $j_{22}=\gamma_1(d_2-a_2-d_1)$  e risulta: \\
+
+$j_{22}=\gamma_1(d_2-a_2-d_1)<0 \iff d_2<a_2+d_1 $ \\
+
+ma poichè tutti i parametri sono strettamente positivi e l'equilibrio $E_4$ è ammissibile solo nel caso in cui $d_2>a_2$, allora l'autovalore $j_{22}$ risulta sempre positivo e dal I teorema di Liapunov posso concludere che $ E_4 $ risulta sempre un punto di equilibrio instabile .
+
+\vspace{0.8cm}
+\item Lo jacobiano valutato in \\
+
+$ E_{5}=\left(d_2-a_2,\dfrac{a_1-a_1d_2+a_1a_2}{a_1-d_1+d_2-a_2},\dfrac{-(d_2-a_2)^2+(1+d_1)(d_2-a_2)-d_1}{a_1-d_1+d_2-a_2}\right) $\\ 
+
+ che è ammissibile nel primo ottante solo se $1+a_2>d_2>a_2+d_1$, risulta:
+\\
+
+$J(E_5)$=  $ \begin{pmatrix}
+(d_2-a_2)(d_1+d_2+a_1-a_2-2) & a_2-d_2 & a_2-d_2 \par \vspace{0.5cm} \newline\\ 
+\gamma_1\left(\dfrac{a_1-a_1d_2+a_1a_2}{a_1-d_1+d_2-a_2}\right) & \gamma_1(d_2-a_2-d_1) & -a_1\gamma_1 \par \vspace{0.5cm} \newline\\
+\gamma_2\left(\dfrac{-(d_2-a_2)^2+(1+d_1)(d_2-a_2)-d_1}{a_1-d_1+d_2-a_2}\right) & 0 & 0 \\
+\end{pmatrix} $   \\
+
+Calcolando il polinomio caratteristico della matrice trovo che un autovalore è: $j_{22}=\gamma_1(d_2-a_2-d_1)$ e risulta strettamente positivo quando l'equilibrio è ammissibile.
+
+Dunque applicando il I Teorema di Liapunov, poiché:\\
+$\lambda^*=Max\{Re(\lambda): \lambda$ autovalore di $J(E_5)\} >0$, \\ 
+concludo che, quando ammissibile, $ E_5 $ risulta sempre un punto di equilibrio instabile .
+
+
+\end{itemize}
+
+
+\vspace{1cm}
+\noindent
+\textbf{Osservazioni}:\\
+\begin{itemize}
+    \item[°] Nel caso in cui $a_2>d_2$, abbiamo che:
+$\dot{z}= \gamma_2 z (x+a_2 - d_2) \geq \gamma_2 z $, dunque grazie al teorema del confronto per problemi di Cauchy \cite{6}, analogamente a quanto fatto nelle sezioni precedenti, si prova che: 
+$ \lim_{\tau \to \infty} z(\tau)=+\infty $.\\
+Di conseguenza, l'espansione della specie $z$ per tempi lunghi comporta l'estinzione delle specie $x$ e $y$.\\
+
+\noindent
+\newpage
+\item[°] Si può dimostrare che la specie $x$ è persistente in $\mathbb{R}^3_+$. Considero il sottosistema $y$-$z$ di \ref{eq:sistemacasolimite}:
+
+\noindent
+
+$
+\begin{cases}
+\dot{y}= -\gamma_1 (yd_1+a_1z) \\[2pt]
+\dot{z}= \gamma_2 z (a_2 - d_2)\\[2pt]
+\end{cases}\\
+$
+
+Annullando il campo vettoriale associato si trova che l'unico possibile punto di equilibrio è quello di estinzione $E_0=(0,0)$.\\
+\noindent
+Seguendo \cite{1}, valutando:\\
+
+$  \dfrac{\dot{x}}{x}\Big|_{(0,0,0)} =(1-x-y-z)\Big|_{(1,0,0)}=1>0 $\\
+
+\noindent
+dalla stretta positività posso concludere che $x$ è persistente in $\mathbb{R}^3_+$.\\
+
+\item[°] L'equilibrio $E_2=(1,0,0)$ risulta globalmente asintoticamente stabile $\iff d_1>1$ e $d_2>1+a_2$.\\
+Proseguendo similmente al Teorema per la persistenza di una specie nel sistema (1.12), trovo che $E_2=(1,0,0)$ è globalmente asintoticamente stabile quando localmente asintoticamente stabile, cioè quando $d_1>1$ e $d_2>1+a_2$.
+\\
+
+\noindent
+%$ \Longrightarrow $ Se $d_1>1$ e $d_2>1+a_2$, il sistema ha stabilità globale in $E_2=(1,0,0)$.
+
+\item[°] Se $d_1<1$ e $d_2>a_2+d_1$, il sistema ha stabilità locale in $E_3=(d_1,1-d_1,0)$\\
+
+\item[°] Se $1+a_2>d_2>a_2+d_1$, esiste l'equilibrio interno $E_5$ sempre instabile e l'equilibrio $E_3=(d_1,1-d_1,0)$ localmente asintoticamente stabile.
+
+\end{itemize}\\
+\vspace{1cm}
+\noindent
+Anallizzando questo caso, al limite tra il sistema (1.12) con risposta funzionale Holling di tipo I, e il sistema di Holt e Polis, con risposta Holling di tipo III, i risultati ottenuti mostrano che il sistema \eqref{eq:sistemacasolimite} non può ammettere attrattori multipli.
+Quindi posso concludere che la destabilizzazione delle dinamiche con IGP, è causata principalmente dal ritorno su scala del predatore IG all'aumentare della densità della preda IG, mentre, come testimoniato dai risultati ottenuti per (1.12), la risposta funzionale Holling di tipo III genera ricche dinamiche con possibilità di coesistenza e attrattori multipli.
+
+
+\newpage
+\chapter*{Appendice}
+Riporto i risultati ottenuti in termini dei parametri originali.\\
+
+\noindent
+\begin{table}[H]
+\begin{tabular}{ |p{3.4cm}|p{4.8cm}|p{4.6cm}|  }
+\hline
+\multicolumn{3}{|l|}{Stabilità degli equilibri al contorno, predatore specialista} \\
+\hline
+Equilibrio & Stabilità & Instabilità \\
+\hline
+$E_1=(0,0,0)$ & mai &  sempre \\
+$E_2=(1,0,0)$ & $d_g>e_ga_gk_p$ e \par \vspace{0.2cm} \newline $d_m>e_ma_mk_p$& $d_g<e_ga_gk_p$ o \par \vspace{0.2cm} \newline $d_m<e_ma_mk_p$ \\
+& & \\
+$E_3=(d_1,1-d_1,0)$ & $d_g<e_ga_gk_p$ e \par \vspace{0.2cm} \newline $\frac{d_m}{a_me_m}>\frac{d_g}{e_ga_g}+\frac{\frac{a}{a_m}(\frac{d_g}{e_ga_gk_p}-1)^2}{(\frac{d_g}{e_ga_gk_p}-1)^2+(\frac{a_gb}{r_p})^2}$&$d_g<e_ga_gk_p$ e \par \vspace{0.2cm} \newline $\frac{d_m}{a_me_m}<\frac{d_g}{e_ga_g}+\frac{\frac{a}{a_m}(\frac{d_g}{e_ga_gk_p}-1)^2}{(\frac{d_g}{e_ga_gk_p}-1)^2+(\frac{a_gb}{r_p})^2}$  \\
+& & \\
+$E_4=(d_2,0,1-d_2)$ & $\frac{d_m}{e_ma_m}<\frac{d_g}{e_ga_gk_p}$ e \par \vspace{0.2cm} \newline $d_m<e_ma_mk_p$ &  $\frac{d_m}{e_ma_m}>\frac{d_g}{e_ga_gk_p}$ e \par \vspace{0.2cm} \newline $d_m>e_ma_mk_p$\\
+
+\hline
+\end{tabular}
+\caption{Predatore specialista: condizioni sufficienti di stabilità degli equilibri di bordo in termini delle costanti originali}
+  \label{tab:costantioriginali1}
+\end{table}
+
+\begin{table}[H]
+\begin{tabular}{ |p{3.7cm}|p{4.5cm}|p{4.4cm}|  }
+\hline
+\multicolumn{3}{|l|}{Stabilità degli equilibri al contorno, predatore generalista} \\
+\hline
+Equilibrio & Stabilità & Instabilità \\
+\hline
+$E_1=(0,0,0)$ & mai &  sempre \\
+$E_2=(1,0,0)$ & mai & sempre \\
+$E_3=(d_1,1-d_1,0)$ & mai & sempre \\
+$E_4=(0,0,\frac{a_3}{a_4})$ & $\frac{a_mk_m}{r_p}>1$ & $\frac{a_mk_m}{r_p}<1 $ \par \vspace{0.05cm} \newline \\
+$E_5=(\frac{a_4-a_3}{a_4+1},0,\frac{1+a_3}{a_4+1})$ & $0<\frac{r_m(r_p-k_ma_m)}{r_pr_m+k_mk_pa_m^2e_m}<\frac{d_g}{e_ga_gk_p}$ & $\frac{r_m(r_p-k_ma_m)}{r_pr_m+k_mk_pa_m^2e_m} >\frac{d_g}{e_ga_gk_p}$ \par \vspace{0.2cm} \newline e $\frac{a_mk_m}{r_p}<1$ \\
+\hline
+\end{tabular}
+\caption{Predatore generalista: condizioni sufficienti di stabilità degli equilibri di bordo in termini delle costanti originali}
+  \label{tab:costantioriginali2}
+\end{table}
+
+\begin{table}[H]
+\begin{tabular}{ |p{0.7cm}|p{6cm}|p{5cm}|  }
+\hline
+\multicolumn{3}{|c|}{Persistenza delle specie} \\
+\hline
+Specie & Predatore specialista & Predatore generalista \\
+\hline
+$x$ & sempre &  $\frac{a_mk_m}{r_p}<1$ \\
+$z$ & $\frac{d_m}{a_me_m}<\frac{d_g}{e_ga_g}+\frac{\frac{a}{a_m}(\frac{d_g}{e_ga_gk_p}-1)^2}{(\frac{d_g}{e_ga_gk_p}-1)^2+(\frac{a_gb}{r_p})^2}$ e \par \vspace{0.2cm} \newline $\frac{d_g}{e_ga_gk_p}<1$ oppure \par \vspace{0.2cm} \newline $\frac{d_m}{e_ma_mk_p}<1$ e $\frac{d_g}{e_ga_gk_p}>1 $ & sempre \\
+ & & \\
+$x,y$ & $\frac{d_g}{e_ga_gk_p}<min[1,\frac{d_m}{e_ma_mk_p}]$ & $\frac{r_m(r_p-k_ma_m)}{r_pr_m+k_mk_pa_m^2e_m}>\frac{d_g}{e_ga_gk_p}$ e \par \vspace{0.2cm} \newline $\frac{a_mk_m}{r_p}<1$ \\
+$x,z$   & $\frac{d_m}{a_me_m}<\frac{d_g}{e_ga_g}+\frac{\frac{a}{a_m}(\frac{d_g}{e_ga_gk_p}-1)^2}{(\frac{d_g}{e_ga_gk_p}-1)^2+(\frac{a_gb}{r_p})^2}$ e \par \vspace{0.2cm} \newline $\frac{d_g}{e_ga_gk_p}<1$ oppure \par \vspace{0.2cm} \newline $\frac{d_m}{e_ma_mk_p}<1<\frac{d_g}{e_ga_gk_p} $  & $\frac{a_mk_m}{r_p}<1$ \par \vspace{1cm} \newline \\
+ & & \\
+$x,y,z$ & $\frac{d_g}{e_ga_g}+\frac{\frac{a}{a_m}(\frac{d_g}{e_ga_gk_p}-1)^2}{(\frac{d_g}{e_ga_gk_p}-1)^2+(\frac{a_gb}{r_p})^2}>\frac{d_m}{a_me_m}>$ \par \vspace{0.2cm} \newline $>\frac{d_g}{a_ge_g}$ e $\frac{d_m}{e_ma_mk_p}<1$& $\frac{r_m(r_p-k_ma_m)}{r_pr_m+k_mk_pa_m^2e_m}>\frac{d_g}{e_ga_gk_p}$ e \par \vspace{0.2cm} \newline $\frac{a_mk_m}{r_p}<1$  \\
+
+\hline
+\end{tabular}
+\caption{Condizioni sufficienti di persistenza delle specie in termini delle costanti originali}
+  \label{tab:costantioriginali3}
+\end{table}
+
+
+
+\vspace{1cm}
+\begin{table}[H]
+\begin{tabular}{ |p{0.7cm}|p{6cm}|p{5cm}|  }
+\hline
+\multicolumn{3}{|c|}{Estinzione delle specie} \\
+\hline
+Specie & Predatore specialista & Predatore generalista \\
+\hline
+$x$ & mai &  $\frac{a_mk_m}{r_p}>1$ \\
+$y$ & $\frac{d_m}{e_ma_mk_p}<min[1,\frac{d_g}{e_ga_gk_p}]$  oppure $\frac{d_g}{e_ga_gk_p}>1 $ & $\frac{d_g}{e_ga_gk_p}>1 $ oppure $\frac{a_mk_m}{r_p}>1$ \\
+$z$ & $\frac{d_m}{e_ma_mk_p}>1+\frac{a}{a_mk_p}$ & mai \\
+$x,y$   & mai & $\frac{a_mk_m}{r_p}>1$ \\
+$y,z$ & $\frac{d_m}{e_ma_mk_p}>1 $ e $\frac{d_g}{e_ga_gk_p}>1 $ & mai \\
+
+\hline
+\end{tabular}
+\caption{Condizioni sufficienti di estinzione delle specie in termini delle costanti originali}
+  \label{tab:costantioriginali3}
+\end{table}
+
+
+\newpage
+
+\begin{thebibliography}{6}
+\bibitem{1} Y. Kang, L. Wedekin, Dynamics of a intraguild predation model with generalist or specialist predator -$\textit{Journal of Mathematical Biology}$ - (2013), \textbf{67}:1227–1259.
+\bibitem{2} R.D. Holt, G.A. Polis, A theoretical framework for intraguild predation - $\textit{"The American naturalist"}$ - (1997), \textbf{149}:745–764.
+ \bibitem{3} V.Hutson, A theorem on average Liapunov functions - $\textit{ "Monatshefte für Mathematik"}$ - (1984), \textbf{98}:267–275.
+ \bibitem{4} R. Riganti, $\textit{Biforcazioni e Caos nei modelli matematici delle Scienze applicate}$, Torino, Levrotto e Bella, (2000).
+
+    \bibitem{5} M.Groppi, note del corso di Modelli della fisica matematica, AA 2022/2023, Università di Parma.
+
+    \bibitem{6} E. Acerbi, G.Buttazzo, $\textit{Secondo corso di analisi matematica}$, Bologna, Pitagora Editrice, (2016).
+    
+\bibitem{7} Wikipedia contributors. "R* rule (ecology)." Wikipedia, The Free Encyclopedia, https://en.wikipedia.org/wiki/R*$\_$rule$\_$(ecology).
+
+\end{thebibliography}
+
+
+
+\end{document}
+
+
+
+
