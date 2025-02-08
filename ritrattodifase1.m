@@ -3,8 +3,6 @@ clear
 clc
 
 
-%è il ritratto 1!!!!!!!!!!!!!!!!!
-
 tspan = [0 200];
 options = odeset('relTol', 1e-8, 'absTol', [1e-8, 1e-8 1e-8]);
 
