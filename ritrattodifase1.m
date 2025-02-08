@@ -16,7 +16,7 @@ for i=1:length(x0)
     hold on
 end
 
-title('N*=gamma/beta = 333.33 con N=300 < N*')
+title('N* = 333.33 con N=300 < N*')
 ylabel('');
 xlabel('');
 ylim([0 500]);
