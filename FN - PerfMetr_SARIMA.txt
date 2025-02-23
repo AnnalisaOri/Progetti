@@ -1,0 +1,23 @@
+#####################################
+########## PerfMetr_SARIMA ##########
+#####################################
+
+### Computes R2, adj-R2, AIC, AICc and BIC for a given SARIMA/regARIMA model (forecast::Arima class)
+
+### Arguments
+# model = SARIMA/regARIMA model to evaluate
+
+PerfMetr_SARIMA <- function(model) {
+  n <- model$nobs
+  lik_crits <- matrix(data = NA, nrow = 1, ncol = 5)
+  lik_crits <- data.frame(lik_crits)
+  colnames(lik_crits) <- c("AIC", "AICc", "BIC", "R2", "R2_adj")
+  # npar <- sum(arimaorder(model))
+  npar <- length(model$coef)
+  # R2 <- cor(model$x,model$fitted)^2
+  R2 <- 1 - model$sigma2*(n-npar)/(var(model$x)*(n-1))
+  R2_adj <- 1 - (1-R2)*(n-1)/(n-npar)
+  lik_crits[1,] <- c(model$aic, model$aicc, model$bic,R2, R2_adj)
+  
+  return(lik_crits)
+}

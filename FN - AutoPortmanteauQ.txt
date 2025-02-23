@@ -1,0 +1,38 @@
+######################################
+########## AutoPortmanteauQ ##########
+######################################
+
+### Computes Ljung-Box and Box-Pierce statistics for several lags (use input)
+
+### Arguments
+# y = TS (ts class object)
+# lags = vector (numeric) of lags to consider
+
+### Output
+# LBQ = Ljung-Box statistics and p-values
+# lags = Box-pierce statistics and p-values
+
+PortmanteauQTest <- function(y,lags) {
+  
+  # deparse(substitute(y))
+
+  LBQ_pv <- matrix(data = NA, nrow = length(lags), ncol = 3)
+  LBQ_pv[,1] <- lags
+  for (i in 1:length(lags)) {
+    LBQ_pv[i,2] <- stats::Box.test(x = y, lag = lags[i], type = "Ljung-Box", fitdf = 0)$statistic
+    LBQ_pv[i,3] <- stats::Box.test(x = y, lag = lags[i], type = "Ljung-Box", fitdf = 0)$p.value
+  }
+  LBQ_pv <- data.frame(LBQ_pv)
+  colnames(LBQ_pv) <- c("lag","LBQ_stat","LBQ_pv")
+  
+  BPQ_pv <- matrix(data = NA, nrow = length(lags), ncol = 3)
+  BPQ_pv[,1] <- lags
+  for (i in 1:length(lags)) {
+    BPQ_pv[i,2] <- stats::Box.test(x = y, lag = lags[i], type = "Box-Pierce", fitdf = 0)$statistic
+    BPQ_pv[i,3] <- stats::Box.test(x = y, lag = lags[i], type = "Box-Pierce", fitdf = 0)$p.value
+  }
+  BPQ_pv <- data.frame(BPQ_pv)
+  colnames(BPQ_pv) <- c("lag","BPQ_stat","BPQ_pv")
+  
+  return(list(LBQ = LBQ_pv,BPQ = BPQ_pv))
+}

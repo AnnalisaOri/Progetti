@@ -1,0 +1,57 @@
+##############################
+########## ARCHTest ##########
+##############################
+
+### Computes Engle's Auto-Regressive Conditional Heteroschedasticity test for a given time series
+# y should be the residuals/innovations of a regression model
+
+### Arguments
+# y = residuals/innovations of a regression model or a generic TS (ts class object)
+# lags_p = vector of AR lags to consider (numeric)
+
+### Output
+# LikelihoodCriteria = Likelihood criteria to select the lag
+# ArchTest_asympt = Asymptotic statistics (Chi-squared) and p-values
+# ArchTest_exact = Exact statistics (F) and p-values
+
+ARCHTest <- function(y,lags_p) {
+  # y should be the residuals/innovations of a regression model
+  # Do not use of seasonal data
+  y2 <- y^2
+  n <- length(y2)
+  
+  lik_crits <- matrix(data = NA, nrow = length(lags_p), ncol = 4)
+  colnames(lik_crits) <- c("AIC", "AICc", "BIC", "R2_adj")
+  LM_stat <- matrix(data = NA, nrow = length(lags_p), ncol = 1)
+  colnames(LM_stat) <- c("LM_stat")
+  ArchTest_asympt <- matrix(data = NA, nrow = length(lags_p), ncol = 2)
+  colnames(ArchTest_asympt) <- c("StatAsympt", "PVAsympt")
+  ArchTest_exact <- matrix(data = NA, nrow = length(lags_p), ncol = 2)
+  colnames(ArchTest_exact) <- c("StatExact", "PVExact")
+  
+  for (np in 1:length(lags_p)) {
+    ARord <- lags_p[np]
+    lags_y2 <- tsutils::lagmatrix(y2,lag = c(1:ARord))
+    data <- data.frame(y2,lags_y2)
+    colnames(data) <- c("y2",paste0("ar",1:ARord))
+    m <- lm(y2 ~ ., data=data)
+    R2 <- summary(m)$r.squared
+    R2_adj <- summary(m)$adj.r.squared
+    AICc <- AIC(m) + (2*(ARord+2)*(ARord+3))/(n-ARord-3)
+    lik_crits[np,] <- c(AIC(m), AICc, BIC(m), R2_adj)
+    LM_stat[np] <- n*R2/(1-R2)
+    ArchTest_asympt[np,] <- c(StatAsympt = LM_stat[np], VAsympt = 1 - pchisq(LM_stat[np],df = ARord))
+    ArchTest_exact[np,] <- c(StatExact = car::linearHypothesis(m, c(paste0("ar",1:ARord,"=0")),test="F")$F[2],
+                             PVExact = car::linearHypothesis(m, c(paste0("ar",1:ARord,"=0")),test="F")$'Pr(>F)'[2]) 
+  }
+  
+  print(paste0("Minimum AIC achieved with ",which.min(lik_crits[,1])," lags"))
+  print(paste0("Minimum AICc achieved with ",which.min(lik_crits[,2])," lags"))
+  print(paste0("Minimum BIC achieved with ",which.min(lik_crits[,3])," lags"))
+  print(paste0("Maximum Adjuster R2 achieved with ",which.max(lik_crits[,4])," lags"))
+  
+  return(list(LikelihoodCriteria= lik_crits,
+              ArchTest_exact=ArchTest_exact,
+              ArchTest_asympt=ArchTest_asympt))
+}
+

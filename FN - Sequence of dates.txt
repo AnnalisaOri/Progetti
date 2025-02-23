@@ -1,0 +1,175 @@
+############################################
+########## Date_seq_fixed_length ###########
+############################################
+
+##### Generates a sequence (fixed length) of dates starting from a given initial date.
+##### The sequence can be seconds, minutes, hourly, daily, weekly, monthly or yearly.
+
+Date_seq_fixed_length <- function(date_begin, length, freq) {
+
+  ### Check inputs
+  if (is.na(lubridate::parse_date_time(date_begin, c("ymd", "ymd HMS","dmy","dmy HMS"), quiet = T)) == T) {
+    stop("Date format not valid. Use 'yyyy-mm-dd hh:mm:ss' or 'yyyy-mm-dd' or 'dd-mm-yyyy hh:mm:ss' or 'dd-mm-yyyy'",
+         call. = FALSE)
+  }
+
+  '%notin%' <- Negate('%in%')
+  if (freq %notin% c("seconds","minutes","hourly","daily","weekly","monthly","yearly")) {
+    stop("Frequency not valid. Use one of 'seconds, 'minutes','hourly', 'daily', 'weekly', 'monthly' or 'yearly'",
+         call. = FALSE)
+  }
+
+  ### Date formatting
+  f <- lubridate::guess_formats(date_begin, orders = c("ymd", "ymd HMS","dmy","dmy HMS"))
+  if (any(names(f) %in% c("dmyHMS"))) date_begin <- lubridate::dmy_hms(date_begin)
+  if (any(names(f) %in% c("ymdHMS"))) date_begin <- lubridate::ymd_hms(date_begin)
+  if (any(names(f) %in% c("dmy"))) date_begin <- lubridate::dmy(date_begin)
+  if (any(names(f) %in% c("ymd"))) date_begin <- lubridate::ymd(date_begin)
+
+  ### Sequence
+  switch(freq,
+         seconds = {
+           dates <- date_begin + lubridate::seconds(0:(length-1))},
+         minutes = {
+           dates <- date_begin + lubridate::minutes(0:(length-1))},
+         hourly = {
+           dates <- date_begin + lubridate::hours(0:(length-1))
+           },
+         daily = {
+           dates <- date_begin + lubridate::days(0:(length-1))
+         },
+         weekly = {
+           dates <- date_begin + lubridate::weeks(0:(length-1))
+         },
+         monthly = {
+           dates <- date_begin + lubridate::months(0:(length-1))
+           },
+         yearly = {
+           dates <- date_begin + lubridate::years(0:(length-1))
+           }
+         )
+
+  return(dates)
+}
+
+# date_begin <- "2020-02-01"
+# d <- Date_seq_fixed_length(date_begin, length = 20, freq = "yearly")
+# d2 <- ymd(d)
+
+# date_begin <- "01-05-1995 00:00:00"
+# d <- Date_seq_fixed_length(date_begin, length = 20, freq = "minutes")
+# d2 <- ymd_hms(d)
+
+
+
+
+
+#########################################
+########## Date_seq_begin_end ###########
+#########################################
+
+##### Generates a sequence of dates between a starting and an ending date.
+##### The sequence can be seconds, minutes, hourly, daily, weekly, monthly or yearly.
+
+Date_seq_begin_end <- function(date_begin, date_end, freq) {
+
+  ### Check inputs
+  if (is.na(lubridate::parse_date_time(date_begin, c("ymd", "ymd HMS","dmy","dmy HMS"), quiet = T)) == T) {
+    stop("Date begin format wrong. Use 'yyyy-mm-dd hh:mm:ss' or 'yyyy-mm-dd' or 'dd-mm-yyyy hh:mm:ss' or 'dd-mm-yyyy'",
+         call. = FALSE)
+  }
+
+  if (is.na(lubridate::parse_date_time(date_end, c("ymd", "ymd HMS","dmy","dmy HMS"), quiet = T)) == T) {
+    stop("Date end format wrong. Use 'yyyy-mm-dd hh:mm:ss' or 'yyyy-mm-dd' or 'dd-mm-yyyy hh:mm:ss' or 'dd-mm-yyyy'",
+         call. = FALSE)
+  }
+
+  '%notin%' <- Negate('%in%')
+  if (freq %notin% c("seconds","minutes","hourly","daily","weekly","monthly","yearly")) {
+    stop("Frequency not valid. Use one of 'seconds'. 'minutes', 'hourly', 'daily', 'weekly', 'monthly' or 'yearly'",
+         call. = FALSE)
+  }
+
+  ### Date formatting
+  f1 <- lubridate::guess_formats(date_begin, orders = c("ymd", "ymd HMS","dmy","dmy HMS"))
+  if (any(names(f1) %in% c("dmyHMS"))) date_begin <- lubridate::dmy_hms(date_begin)
+  if (any(names(f1) %in% c("ymdHMS"))) date_begin <- lubridate::ymd_hms(date_begin)
+  if (any(names(f1) %in% c("dmy"))) date_begin <- lubridate::dmy(date_begin)
+  if (any(names(f1) %in% c("ymd"))) date_begin <- lubridate::ymd(date_begin)
+
+  f2 <- lubridate::guess_formats(date_end, orders = c("ymd", "ymd HMS","dmy","dmy HMS"))
+  if (any(names(f2) %in% c("dmyHMS"))) date_end <- lubridate::dmy_hms(date_end)
+  if (any(names(f2) %in% c("ymdHMS"))) date_end <- lubridate::ymd_hms(date_end)
+  if (any(names(f2) %in% c("dmy"))) date_end <- lubridate::dmy(date_end)
+  if (any(names(f2) %in% c("ymd"))) date_end <- lubridate::ymd(date_end)
+
+  ### Sequence
+  switch(freq,
+         seconds = {dates <- seq(date_begin,date_end, by = as.difftime(seconds(1)))},
+         minutes = {dates <- seq(date_begin,date_end, by = as.difftime(minutes(1)))},
+         hourly = {dates <- seq(date_begin,date_end, by = as.difftime(hours(1)))},
+         daily = {dates <- seq(date_begin,date_end, by = as.difftime(days(1)))},
+         weekly = {dates <- seq(date_begin,date_end, by = as.difftime(weeks(1)))},
+         monthly = {dates <- seq(date_begin,date_end, by = as.difftime(months(1)))},
+         yearly = {dates <- seq(date_begin,date_end, by = as.difftime(years(1)))})
+
+  return(dates)
+}
+
+
+# date_begin <- "2020-02-01"
+# date_end <- "2020-12-01"
+# d <- Date_seq_begin_end(date_begin, date_end, freq = "monthly")
+# d2 <- ymd(d)
+
+# date_begin <- "01-05-1995 00:00:00"
+# date_end <- "10-05-1995 00:00:00"
+# d <- Date_seq_begin_end(date_begin, date_end, freq = "hourly")
+# d2 <- ymd_hms(d)
+
+
+
+
+
+##################################
+########## TS_ind_step ###########
+##################################
+
+##### Generates a sequence (same length of the original TS) of index values to group the observations
+##### according to a fixed-length step
+
+TS_ind_step <- function(y, step) {
+
+  ### Numero di valori interi
+  integer_floor <- floor(length(y)/step)
+  ### Sequenza per la parte intera
+  ind1 <- rep(seq(from=1,integer_floor),each=step)
+  ### Numero di valori non interi
+  n_ind2 <- length(y) - length(ind1)
+  ### Sequenca per la parte non intera
+  ind2 <- rep(integer_floor + 1,each = n_ind2)
+  ### Concatenazione
+  ind <- c(ind1,ind2)
+
+  return(ind)
+}
+
+# library(lubridate)
+# library(ggplot2)
+# library(tidyverse)
+
+# y <- rnorm(24*35)
+# y_dates <- Date_seq_fixed_length(date_begin, length = length(y), freq = "hourly")
+
+# y_ind <- TS_ind_step(y = y, step = 7*24)
+
+# data <- data.frame(y_dates,y)
+
+# data <- data %>%
+#   mutate(y_ind = TS_ind_step(y, step = 7*24)) %>%
+#   group_by(y_ind) %>%
+#   mutate(avg = mean(y))
+
+# ggplot(data = data) +
+#   geom_line(mapping = aes(x = y_dates, y = y)) +
+#   geom_line(mapping = aes(x = y_dates, y = avg), col="blue", lwd=2)

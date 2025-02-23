@@ -1,0 +1,157 @@
+TS_custom_aggregate <- function(Dataset, Date_var_name, Frequency, Var_vec = NULL, Fns_vec = NULL) {
+
+  quantilep <- function(x, perc_str) {
+    p <- as.numeric(sub(".*q", "",perc_str))/100
+    p_names <- purrr::map_chr(p, ~ paste0("q",.x*100))
+    p_funs <- purrr::map(p, ~ purrr::partial(stats::quantile, probs = .x, na.rm = TRUE)) %>%
+      purrr::set_names(nm = p_names)
+    return(p_funs)
+  }
+
+  vv_vec <- (duplicated(Var_vec,fromLast = T) | duplicated(Var_vec,fromLast = F))
+
+  Custom_summarise <- function(grouped_data,var_vec,fns_vec) {
+    summ_data <- grouped_data %>%
+      dplyr::summarise(dplyr::across(var_vec[vv_vec & fns_vec=="mean"], ~ mean(.x, na.rm=T),.names = "{.col}_mean"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="mean"], ~ mean(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="median"], ~ median(.x, na.rm=T),.names = "{.col}_median"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="median"], ~ median(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & grepl('\\bq[0-9]+$',fns_vec)],
+                                     list(!!!quantilep(.data$.x,var_vec[vv_vec & grepl('\\bq[0-9]+$',fns_vec)])),
+                                     .names = "{.col}_{.fn}"),
+                       dplyr::across(var_vec[!vv_vec & grepl('\\bq[0-9]+$',fns_vec)], ~
+                                       quantilep(.x,fns_vec[!vv_vec & grepl('\\bq[0-9]+$',fns_vec)])),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="sum"], ~ sum(.x, na.rm=T),.names = "{.col}_cum"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="sum"], ~ sum(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="min"], ~ min(.x, na.rm=T),.names = "{.col}_min"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="min"], ~ min(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="max"], ~ max(.x, na.rm=T),.names = "{.col}_max"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="max"], ~ max(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="sd"], ~ sd(.x, na.rm=T),.names = "{.col}_sd"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="sd"], ~ sd(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="var"], ~ var(.x, na.rm=T),.names = "{.col}_var"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="var"], ~ var(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="vc"], ~ sd(.x, na.rm=T)/mean(.x, na.rm=T),.names = "{.col}_vc"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="vc"], ~ sd(.x, na.rm=T)/mean(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="skew"], ~ moments::skewness(.x, na.rm=T),.names = "{.col}_skew"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="skew"], ~ moments::skewness(.x, na.rm=T)),
+                       dplyr::across(var_vec[vv_vec & fns_vec=="kurt"], ~ moments::kurtosis(.x, na.rm=T),.names = "{.col}_kurt"),
+                       dplyr::across(var_vec[!vv_vec & fns_vec=="kurt"], ~ moments::kurtosis(.x, na.rm=T))) %>%
+      dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric), ~ ifelse(is.infinite(.x), NA, .x)))
+    # Drop non-useful columns concerning the quantiles
+    if (sum(grepl('\\q[0-9]+$',names(summ_data))) > 0) {
+      names_full <- names(summ_data)[grepl('\\q[0-9]+$',names(summ_data))]
+      to_drop <- names_full[names_full %notin% paste0(var_vec,"_",fns_vec)]
+      summ_data <- summ_data %>%
+        dplyr::select(-to_drop)
+    }
+    return(summ_data)
+  }
+
+  '%notin%' <- Negate('%in%')
+  Date_val <- Dataset[[Date_var_name]]
+
+  if (is.null(Var_vec) & is.null(Fns_vec)) {
+    vv <- names(Dataset)
+    vv <- vv[names(Dataset) %notin% Date_var_name]
+    fv <- rep("mean",length(vv))
+  } else {
+    vv <- Var_vec
+    fv <- Fns_vec
+  }
+
+  data_aggr <- switch(Frequency,
+                      yearly = {
+                        # Aggregation to yearly data
+                        Dataset %>%
+                          data.frame() %>%
+                          dplyr::mutate(Y = lubridate::year(Date_val)) %>%
+                          dplyr::group_by(.data$Y) %>%
+                          Custom_summarise(vv, fv) %>%
+                          dplyr::ungroup() %>%
+                          dplyr::mutate(Date = lubridate::make_datetime(year = .data$Y)) %>%
+                          dplyr::select(-c(.data$Y)) %>%
+                          dplyr::relocate(.data$Date) %>%
+                          dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric),
+                                                      ~ ifelse(is.nan(.), NA, .)))},
+                      monthly = {
+                        # Aggregation to monthly data
+                        Dataset %>%
+                          data.frame() %>%
+                          dplyr::mutate(Y = lubridate::year(Date_val),
+                                        M = lubridate::month(Date_val)) %>%
+                          dplyr::group_by(.data$Y, .data$M) %>%
+                          Custom_summarise(vv, fv) %>%
+                          dplyr::ungroup() %>%
+                          dplyr::mutate(Date = lubridate::make_datetime(year = .data$Y,
+                                                                        month = .data$M)) %>%
+                          dplyr::select(-c(.data$Y,.data$M)) %>%
+                          dplyr::relocate(.data$Date) %>%
+                          dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric),
+                                                      ~ ifelse(is.nan(.), NA, .)))},
+                      weekly = {
+                        # Aggregation to weekly data
+                        Dataset %>%
+                          data.frame() %>%
+                          dplyr::mutate(Y = lubridate::year(Date_val),
+                                        M = lubridate::month(Date_val),
+                                        W = aweek::date2week(Date_val, factor = T),
+                                        D = lubridate::day(Date_val)) %>%
+                          dplyr::group_by(.data$W) %>%
+                          Custom_summarise(vv, fv) %>%
+                          dplyr::ungroup() %>%
+                          dplyr::mutate(Date = aweek::week2date(.data$W),
+                                        Date = lubridate::make_datetime(year = lubridate::year(.data$Date),
+                                                                        month = lubridate::month(.data$Date),
+                                                                        day = lubridate::day(.data$Date))) %>%
+                          dplyr::select(-c(.data$W)) %>%
+                          dplyr::relocate(.data$Date) %>%
+                          dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric),
+                                                      ~ ifelse(is.nan(.), NA, .)))},
+                      # Aggregation to daily data
+                      daily = {
+                        Dataset %>%
+                          data.frame() %>%
+                          dplyr::mutate(Y = lubridate::year(Date_val),
+                                        M = lubridate::month(Date_val),
+                                        D = lubridate::day(Date_val)) %>%
+                          dplyr::group_by(.data$Y, .data$M, .data$D) %>%
+                          Custom_summarise(vv, fv) %>%
+                          dplyr::ungroup() %>%
+                          dplyr::mutate(Date = lubridate::make_datetime(year = .data$Y,
+                                                                        month = .data$M,
+                                                                        day = .data$D)) %>%
+                          dplyr::select(-c(.data$Y,.data$M,.data$D)) %>%
+                          dplyr::relocate(.data$Date) %>%
+                          dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric),
+                                                      ~ ifelse(is.nan(.), NA, .)))},
+                      # Aggregation to hourly data
+                      hourly = {
+                        Dataset %>%
+                          data.frame() %>%
+                          dplyr::mutate(Y = lubridate::year(Date_val),
+                                        M = lubridate::month(Date_val),
+                                        D = lubridate::day(Date_val),
+                                        H = lubridate::hour(Date_val)) %>%
+                          dplyr::group_by(.data$Y, .data$M, .data$D, .data$H) %>%
+                          Custom_summarise(vv, fv) %>%
+                          dplyr::ungroup() %>%
+                          dplyr::mutate(Date = lubridate::make_datetime(year = .data$Y,
+                                                                        month = .data$M,
+                                                                        day = .data$D,
+                                                                        hour = .data$H)) %>%
+                          dplyr::select(-c(.data$Y,.data$M,.data$D,.data$H)) %>%
+                          dplyr::relocate(.data$Date) %>%
+                          dplyr::mutate(dplyr::across(tidyselect::vars_select_helpers$where(is.numeric),
+                                                      ~ ifelse(is.nan(.), NA, .)))})
+
+  structure(list(data_aggr = data_aggr))
+  attr(data_aggr, "class") <- c("tbl_df","tbl","data.frame")
+  return(data_aggr)
+}
+
+
+# TS_custom_aggregate(Dataset = y9, Date_var_name = "t9", Frequency = "weekly")
+# TS_custom_aggregate(Dataset = y9, Date_var_name = "t9", Frequency = "monthly")
+# TS_custom_aggregate(Dataset = y9, Date_var_name = "t9", Frequency = "weekly",
+#                     Var_vec = c("y9","y9","y9"), Fns_vec = c("min","mean","max"))
