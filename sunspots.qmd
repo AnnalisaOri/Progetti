@@ -1,0 +1,91 @@
+---
+title: "sunspots"
+format: html
+editor: visual
+---
+
+Costruiamo ora un modello per la serie storica mensile del numero di macchie solari. Il modello che vogliamo è composto da un random walk integrato, una stagionalità mensile a dummy stocastiche, un ciclo stocastico e un rumore bianco.
+
+``` R
+data("sunspots")
+plot(sunspots)
+```
+
+![](images/Screenshot 2025-08-11 alle 12.14.33.png)
+
+``` R
+modello3 <- SSModel(sunspots~0+SSMtrend(2, list(0, NA))+
+SSMcycle(11, NA)+
+SSMseasonal(12, NA, "dummy"),
+H = NA)
+
+updtfn <- function(pars, model) {
+model$Q[2, 2, 1] <- exp(pars[1])
+model$Q[3, 3, 1] <- exp(pars[2])
+model$Q[4, 4, 1] <- model$Q[5, 5, 1] <- exp(pars[3])
+model$H[1, 1, 1] <- exp(pars[4])
+rho <- 1/(1+exp(-pars[5]))
+cperiod <- 24 + 156/(1+exp(-pars[6]))
+lambda <- 2*pi/cperiod
+model$T[14, 14, 1] <- model$T[15, 15, 1] <- rho*cos(lambda)
+model$T[15, 14, 1] <- -rho*sin(lambda)
+model$T[14, 15, 1] <- rho*sin(lambda)
+model
+}
+
+fit3 <- fitSSM(modello3, c(-1, 2, 5, 5, 2, 0.81), updtfn)
+
+
+cat("period =", 24 + 156/(1+exp(-fit3$optim.out$par[6])))
+
+## period = 144.0089
+
+
+cat("rho =", 1/(1+exp(-fit3$optim.out$par[5])))
+## rho = 0.9999996
+```
+
+Osserviamo che logit(rho) è una trasformazione di periodo che garantisce che il parametro stia tra 2 e 15 anni.
+
+Il ciclo è molto persistente e ha una periodicità media di circa 144/12 = 12 anni. Vediamo le componenti.
+
+``` R
+smo3 <- KFS(fit3$model, smoothing = "state")
+plot(sunspots, main = "Sunspots & level")
+lines(smo3$alphahat[, 1], col = "blue")
+```
+
+![](images/Screenshot 2025-08-11 alle 12.19.16.png)
+
+Aggiungengo anche il ciclo:
+
+``` R
+plot(sunspots, main = "Sunspots & level + cycle")
+lines(smo3$alphahat[, "level"] + smo3$alphahat[, "cycle"], col = "blue")
+```
+
+![](images/Screenshot 2025-08-11 alle 12.20.49.png)
+
+mentre la componente stagionale:
+
+``` R
+plot(smo3$alphahat[, "sea_dummy1"], main = "Seasonal component")
+```
+
+![](images/Screenshot 2025-08-11 alle 12.22.00.png)
+
+Per fare previsioni possiamo usare la funzione predict().
+
+``` R
+pre3 <- predict(fit3$model, n.ahead = 144, interval = "prediction")
+plot(pre3[, "fit"], ylim = c(min(pre3), max(pre3)))
+polygon(c(time(pre3), rev(time(pre3))), c(pre3[, "lwr"], rev(pre3[, "upr"])),
+col = "lightblue", border = FALSE)
+lines(pre3[, "fit"], col = "blue")
+```
+
+![](images/Screenshot 2025-08-11 alle 12.23.01.png)
+
+Il risultato è un intervallo di valori entro cui, con un certo livello di confidenza, ci aspettiamo che la serie futura si collochi, tenendo conto dell’incertezza sia delle componenti latenti sia del rumore di osservazione.
+
+Grazie alla formulazione state space e al filtro di Kalman, la previsione è rigorosamente ottimale nel senso di errore quadratico medio, e riflette dinamicamente la struttura complessa del modello (trend, stagionalità e ciclo). Questo consente di anticipare cambiamenti ciclici e stagionali, offrendo strumenti preziosi per analisi di lungo periodo e pianificazione.
