@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:5031/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>State Space Model Analysis Using KFAS</title>
+<style class="anchorjs"></style><style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="./State Space Model Analysis Using KFAS_files/clipboard.min.js"></script>
+<script src="./State Space Model Analysis Using KFAS_files/quarto.js"></script>
+<script src="./State Space Model Analysis Using KFAS_files/popper.min.js"></script>
+<script src="./State Space Model Analysis Using KFAS_files/tippy.umd.min.js"></script>
+<script src="./State Space Model Analysis Using KFAS_files/anchor.min.js"></script>
+<link href="./State Space Model Analysis Using KFAS_files/tippy.css" rel="stylesheet">
+<link href="./State Space Model Analysis Using KFAS_files/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="./State Space Model Analysis Using KFAS_files/bootstrap.min.js"></script>
+<link href="./State Space Model Analysis Using KFAS_files/bootstrap-icons.css" rel="stylesheet">
+<link href="./State Space Model Analysis Using KFAS_files/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="./State Space Model Analysis Using KFAS_files/tex-chtml-full.js" type="text/javascript"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<style>.ansi-display{font-family:monospace;white-space:pre-wrap;--ansiBlack: #000000;--ansiRed: #cd3131;--ansiGreen: #00BC00;--ansiYellow: #949800;--ansiBlue: #0451a5;--ansiMagenta: #bc05bc;--ansiCyan: #0598bc;--ansiWhite: #555555;--ansiBrightBlack: #666666;--ansiBrightRed: #cd3131;--ansiBrightGreen: #14CE14;--ansiBrightYellow: #b5ba00;--ansiBrightBlue: #0451a5;--ansiBrightMagenta: #bc05bc;--ansiBrightCyan: #0598bc;--ansiBrightWhite: #a5a5a5}.dark-mode .ansi-display{--ansiBlack: #000000;--ansiRed: #cd3131;--ansiGreen: #0DBC79;--ansiYellow: #e5e510;--ansiBlue: #2472c8;--ansiMagenta: #bc3fbc;--ansiCyan: #11a8cd;--ansiWhite: #e5e5e5;--ansiBrightBlack: #666666;--ansiBrightRed: #f14c4c;--ansiBrightGreen: #23d18b;--ansiBrightYellow: #f5f543;--ansiBrightBlue: #3b8eea;--ansiBrightMagenta: #d670d6;--ansiBrightCyan: #29b8db;--ansiBrightWhite: #e5e5e5}@keyframes ansi-displaly-run-blink{50%{opacity:0}}.fui-FluentProvider h2{border-bottom:none;padding-bottom:0}</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-math {
+  display: inline-block;
+  text-align: left;
+  line-height: 0;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 100%;
+  font-size-adjust: none;
+  letter-spacing: normal;
+  border-collapse: collapse;
+  word-wrap: normal;
+  word-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+  padding: 1px 0;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="CHTML"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-math {
+  padding: 0;
+}
+
+mjx-container[jax="CHTML"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="CHTML"][justify="right"] {
+  text-align: right;
+}
+
+mjx-msub {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mi {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-c {
+  display: inline-block;
+}
+
+mjx-utext {
+  display: inline-block;
+  padding: .75em 0 .2em 0;
+}
+
+mjx-TeXAtom {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mo {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-stretchy-h {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-stretchy-h > * {
+  display: table-cell;
+  width: 0;
+}
+
+mjx-stretchy-h > * > mjx-c {
+  display: inline-block;
+  transform: scalex(1.0000001);
+}
+
+mjx-stretchy-h > * > mjx-c::before {
+  display: inline-block;
+  width: initial;
+}
+
+mjx-stretchy-h > mjx-ext {
+  /* IE */ overflow: hidden;
+  /* others */ overflow: clip visible;
+  width: 100%;
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c::before {
+  transform: scalex(500);
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c {
+  width: 0;
+}
+
+mjx-stretchy-h > mjx-beg > mjx-c {
+  margin-right: -.1em;
+}
+
+mjx-stretchy-h > mjx-end > mjx-c {
+  margin-left: -.1em;
+}
+
+mjx-stretchy-v {
+  display: inline-block;
+}
+
+mjx-stretchy-v > * {
+  display: block;
+}
+
+mjx-stretchy-v > mjx-beg {
+  height: 0;
+}
+
+mjx-stretchy-v > mjx-end > mjx-c {
+  display: block;
+}
+
+mjx-stretchy-v > * > mjx-c {
+  transform: scaley(1.0000001);
+  transform-origin: left center;
+  overflow: hidden;
+}
+
+mjx-stretchy-v > mjx-ext {
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+  border: 0px solid transparent;
+  /* IE */ overflow: hidden;
+  /* others */ overflow: visible clip;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c::before {
+  width: initial;
+  box-sizing: border-box;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c {
+  transform: scaleY(500) translateY(.075em);
+  overflow: visible;
+}
+
+mjx-mark {
+  display: inline-block;
+  height: 0px;
+}
+
+mjx-mn {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+
+mjx-c.mjx-c1D466.TEX-I::before {
+  padding: 0.442em 0.49em 0.205em 0;
+  content: "y";
+}
+
+mjx-c.mjx-c1D461.TEX-I::before {
+  padding: 0.626em 0.361em 0.011em 0;
+  content: "t";
+}
+
+mjx-c.mjx-c200B::before {
+  padding: 0 0 0 0;
+  content: "";
+}
+
+mjx-c.mjx-c3D::before {
+  padding: 0.583em 0.778em 0.082em 0;
+  content: "=";
+}
+
+mjx-c.mjx-c1D6FC.TEX-I::before {
+  padding: 0.442em 0.64em 0.011em 0;
+  content: "\3B1";
+}
+
+mjx-c.mjx-c2B::before {
+  padding: 0.583em 0.778em 0.082em 0;
+  content: "+";
+}
+
+mjx-c.mjx-c1D700.TEX-I::before {
+  padding: 0.452em 0.466em 0.022em 0;
+  content: "\3B5";
+}
+
+mjx-c.mjx-c2C::before {
+  padding: 0.121em 0.278em 0.194em 0;
+  content: ",";
+}
+
+mjx-c.mjx-c223C::before {
+  padding: 0.367em 0.778em 0 0;
+  content: "\223C";
+}
+
+mjx-c.mjx-c1D441.TEX-I::before {
+  padding: 0.683em 0.888em 0 0;
+  content: "N";
+}
+
+mjx-c.mjx-c28::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: "(";
+}
+
+mjx-c.mjx-c30::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "0";
+}
+
+mjx-c.mjx-c1D43B.TEX-I::before {
+  padding: 0.683em 0.888em 0 0;
+  content: "H";
+}
+
+mjx-c.mjx-c29::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: ")";
+}
+
+mjx-c.mjx-c31::before {
+  padding: 0.666em 0.5em 0 0;
+  content: "1";
+}
+
+mjx-c.mjx-c1D702.TEX-I::before {
+  padding: 0.442em 0.497em 0.216em 0;
+  content: "\3B7";
+}
+
+mjx-c.mjx-c1D444.TEX-I::before {
+  padding: 0.704em 0.791em 0.194em 0;
+  content: "Q";
+}
+
+mjx-c.mjx-c1D707.TEX-I::before {
+  padding: 0.442em 0.603em 0.216em 0;
+  content: "\3BC";
+}
+</style><style data-make-styles-bucket="d" data-priority="0"></style><style id="fui-FluentProviderr0"></style></head>
+
+<body class="fullcontent quarto-light" data-tabster="{&quot;root&quot;:{}}">
+
+<i tabindex="0" role="none" data-tabster-dummy="" aria-hidden="true" style="position: fixed; height: 1px; width: 1px; opacity: 0.001; z-index: -1; content-visibility: hidden; top: 0px; left: 0px;"></i><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">State Space Model Analysis Using KFAS</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#introduction" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h2>
+<p>State space models allow representing a time series through a latent state variable that evolves over time and an observation equation that links the observed data to the state variable with the addition of noise.</p>
+<p>In this document, the <strong>KFAS</strong> package is used to estimate state space models for the annual flow series of the Nile River (Nile).</p>
+<p>Typically, some of the parameters in our state space models are unknown and must be estimated. If the assumption of Gaussian system disturbances is plausible, the Kalman filter makes it possible to compute the likelihood for any set of parameter values to be estimated. However, maximizing the (log-)Gaussian likelihood even when the data are not normally distributed still yields estimates whose asymptotic behavior is known (under regularity conditions).</p>
+</section>
+<section id="state-space-form" class="level2">
+<h2 class="anchored" data-anchor-id="state-space-form">State Space Form<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#state-space-form" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="http://localhost:5031/#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(KFAS) </span>
+<span id="cb1-2"><a href="http://localhost:5031/#cb1-2" aria-hidden="true" tabindex="-1"></a>modello1 <span class="ot">&lt;-</span> <span class="fu">SSModel</span>(Nile<span class="sc">~</span><span class="dv">0</span><span class="sc">+</span><span class="fu">SSMtrend</span>(<span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">H =</span> <span class="cn">NA</span>) </span>
+<span id="cb1-3"><a href="http://localhost:5031/#cb1-3" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">fitSSM</span>(modello1, <span class="fu">rep</span>(<span class="fu">log</span>(<span class="fu">var</span>(<span class="fu">diff</span>(Nile))), <span class="dv">2</span>)) </span>
+<span id="cb1-4"><a href="http://localhost:5031/#cb1-4" aria-hidden="true" tabindex="-1"></a>fit1<span class="sc">$</span>optim.out<span class="sc">$</span>convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We estimate a random walk plus noise model, where:</p>
+<ul>
+<li><strong>Observation equation:</strong></li>
+</ul>
+<p><span class="math inline"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="0" style="font-size: 119.1%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-texatom texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-c200B"></mjx-c></mjx-mo></mjx-texatom><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-msub space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D6FC TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-texatom texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-c200B"></mjx-c></mjx-mo></mjx-texatom><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-msub space="3"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D700 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-texatom texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-c200B"></mjx-c></mjx-mo></mjx-texatom><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D700 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-texatom texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-c200B"></mjx-c></mjx-mo></mjx-texatom><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c223C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D441 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mn class="mjx-n"><mjx-c class="mjx-c30"></mjx-c></mjx-mn><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D43B TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>y</mi><mi>t</mi></msub><mrow data-mjx-texclass="ORD"><mo>​</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>t</mi></msub><mrow data-mjx-texclass="ORD"><mo>​</mo></mrow><mo>+</mo><msub><mi>ε</mi><mi>t</mi></msub><mrow data-mjx-texclass="ORD"><mo>​</mo></mrow><mo>,</mo><msub><mi>ε</mi><mi>t</mi></msub><mrow data-mjx-texclass="ORD"><mo>​</mo></mrow><mo>∼</mo><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mi>H</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container></span></p>
+<ul>
+<li>State equation (local level, order 1):</li>
+</ul>
+<p><span class="math inline"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="1" style="font-size: 119.1%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D6FC TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" texclass="ORD"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-msub space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D6FC TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-msub space="3"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D702 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-msub space="2"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D702 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c223C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D441 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mn class="mjx-n"><mjx-c class="mjx-c30"></mjx-c></mjx-mn><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="2"><mjx-c class="mjx-c1D444 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>α</mi><mrow data-mjx-texclass="ORD"><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>α</mi><mi>t</mi></msub><mo>+</mo><msub><mi>η</mi><mi>t</mi></msub><mo>,</mo><msub><mi>η</mi><mi>t</mi></msub><mo>∼</mo><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mi>Q</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container></span></p>
+<p>The model therefore has two variances to be estimated:</p>
+<p><code>SSMtrend(1, NA)</code> specifies a local level (random walk) with unknown variance (<code>NA</code>).</p>
+<p><code>H = NA</code> indicates that the variance of the observation noise is also unknown.</p>
+<section id="maximum-likelihood-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="maximum-likelihood-estimates">Maximum likelihood estimates<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#maximum-likelihood-estimates" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h3>
+<section id="first-method-loglik-function" class="level4">
+<h4 class="anchored" data-anchor-id="first-method-loglik-function">First method: logLik() function<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#first-method-loglik-function" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="http://localhost:5031/#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I create a function that estimates the variances of the LLT + WN model:</span></span>
+<span id="cb2-2"><a href="http://localhost:5031/#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="http://localhost:5031/#cb2-3" aria-hidden="true" tabindex="-1"></a>fit_RW_plus_WN <span class="ot">&lt;-</span> <span class="cf">function</span>(model, <span class="at">pars.init =</span> <span class="fu">rep</span>(<span class="fu">log</span>(<span class="fu">var</span>(<span class="fu">diff</span>(model<span class="sc">$</span>y))), <span class="dv">2</span>)) {</span>
+<span id="cb2-4"><a href="http://localhost:5031/#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="http://localhost:5031/#cb2-5" aria-hidden="true" tabindex="-1"></a>objective <span class="ot">&lt;-</span> <span class="cf">function</span>(pars) {</span>
+<span id="cb2-6"><a href="http://localhost:5031/#cb2-6" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>Q[<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">&lt;&lt;-</span> <span class="fu">exp</span>(pars[<span class="dv">1</span>]) </span>
+<span id="cb2-7"><a href="http://localhost:5031/#cb2-7" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>H[<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">&lt;&lt;-</span> <span class="fu">exp</span>(pars[<span class="dv">2</span>])</span>
+<span id="cb2-8"><a href="http://localhost:5031/#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="fu">logLik</span>(model) <span class="co"># I change the sign because optim() performs minimization</span></span>
+<span id="cb2-9"><a href="http://localhost:5031/#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="http://localhost:5031/#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="http://localhost:5031/#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># We minimize the objective function (using the BFGS algorithm)</span></span>
+<span id="cb2-12"><a href="http://localhost:5031/#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#and request the Hessian at the maximum point</span></span>
+<span id="cb2-13"><a href="http://localhost:5031/#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="http://localhost:5031/#cb2-14" aria-hidden="true" tabindex="-1"></a>optout <span class="ot">&lt;-</span> <span class="fu">optim</span>(pars.init, objective, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-15"><a href="http://localhost:5031/#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="http://localhost:5031/#cb2-16" aria-hidden="true" tabindex="-1"></a>estim <span class="ot">&lt;-</span> <span class="fu">exp</span>(optout<span class="sc">$</span>par)</span>
+<span id="cb2-17"><a href="http://localhost:5031/#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#maximum likelihood estimation of the variances;</span></span>
+<span id="cb2-18"><a href="http://localhost:5031/#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="http://localhost:5031/#cb2-19" aria-hidden="true" tabindex="-1"></a>mI<span class="ot">&lt;-</span> <span class="fu">solve</span>(optout<span class="sc">$</span>hessian) </span>
+<span id="cb2-20"><a href="http://localhost:5031/#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#inverse of the estimated Fisher information;</span></span>
+<span id="cb2-21"><a href="http://localhost:5031/#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="http://localhost:5031/#cb2-22" aria-hidden="true" tabindex="-1"></a>mV <span class="ot">&lt;-</span> <span class="fu">diag</span>(estim) <span class="sc">%*%</span> mI <span class="sc">%*%</span> <span class="fu">diag</span>(estim) </span>
+<span id="cb2-23"><a href="http://localhost:5031/#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># delta method in action;</span></span>
+<span id="cb2-24"><a href="http://localhost:5031/#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="http://localhost:5031/#cb2-25" aria-hidden="true" tabindex="-1"></a>sterr <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(mV)) </span>
+<span id="cb2-26"><a href="http://localhost:5031/#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#vector of standard errors;</span></span>
+<span id="cb2-27"><a href="http://localhost:5031/#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="http://localhost:5031/#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="http://localhost:5031/#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># assign names to the parameters;</span></span>
+<span id="cb2-30"><a href="http://localhost:5031/#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(estim) <span class="ot">&lt;-</span> <span class="fu">names</span>(sterr) <span class="ot">&lt;-</span></span>
+<span id="cb2-31"><a href="http://localhost:5031/#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mV) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(mV) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"var(eta)"</span>, <span class="st">"var(eps)"</span>)</span>
+<span id="cb2-32"><a href="http://localhost:5031/#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="http://localhost:5031/#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">parameters =</span> estim, <span class="at">stderr =</span> sterr, <span class="at">cov =</span> mV, <span class="at">logLik =</span> <span class="sc">-</span>optout<span class="sc">$</span>value,<span class="at">optim.out =</span> optout)</span>
+<span id="cb2-34"><a href="http://localhost:5031/#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-35"><a href="http://localhost:5031/#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="http://localhost:5031/#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="http://localhost:5031/#cb2-37" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">fit_RW_plus_WN</span>(modello1)</span>
+<span id="cb2-38"><a href="http://localhost:5031/#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="http://localhost:5031/#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimation of the variances and their standard errors</span></span>
+<span id="cb2-40"><a href="http://localhost:5031/#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="at">param =</span> fit1<span class="sc">$</span>parameters, <span class="at">stderr =</span> fit1<span class="sc">$</span>stderr)</span>
+<span id="cb2-41"><a href="http://localhost:5031/#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="http://localhost:5031/#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="do">##                param   stderr</span></span>
+<span id="cb2-43"><a href="http://localhost:5031/#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="do">##  var(eta)   1469.163 1280.358</span></span>
+<span id="cb2-44"><a href="http://localhost:5031/#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="do">## var(eps)  15098.651 3145.560</span></span>
+<span id="cb2-45"><a href="http://localhost:5031/#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="http://localhost:5031/#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Value of the log-likelihood at its maximum</span></span>
+<span id="cb2-47"><a href="http://localhost:5031/#cb2-47" aria-hidden="true" tabindex="-1"></a>fit1<span class="sc">$</span>logLik</span>
+<span id="cb2-48"><a href="http://localhost:5031/#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co">#[1] -632.5456</span></span>
+<span id="cb2-49"><a href="http://localhost:5031/#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="http://localhost:5031/#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="http://localhost:5031/#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of calls to the objective() function made by optim()</span></span>
+<span id="cb2-52"><a href="http://localhost:5031/#cb2-52" aria-hidden="true" tabindex="-1"></a>fit1<span class="sc">$</span>optim.out<span class="sc">$</span>counts</span>
+<span id="cb2-53"><a href="http://localhost:5031/#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="do">## function gradient</span></span>
+<span id="cb2-54"><a href="http://localhost:5031/#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="do">## 36 10</span></span>
+<span id="cb2-55"><a href="http://localhost:5031/#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="http://localhost:5031/#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Convergence code from optim(): if it is zero, the optimization was successful</span></span>
+<span id="cb2-57"><a href="http://localhost:5031/#cb2-57" aria-hidden="true" tabindex="-1"></a>fit1<span class="sc">$</span>optim.out<span class="sc">$</span>convergence</span>
+<span id="cb2-58"><a href="http://localhost:5031/#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="co">#[1] 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="second-method-estimation-via-the-fitssm-function" class="level4">
+<h4 class="anchored" data-anchor-id="second-method-estimation-via-the-fitssm-function">Second method: estimation via the <code>fitSSM()</code> function<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#second-method-estimation-via-the-fitssm-function" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="http://localhost:5031/#cb3-1" aria-hidden="true" tabindex="-1"></a>updt <span class="ot">&lt;-</span> <span class="cf">function</span>(pars, model) {</span>
+<span id="cb3-2"><a href="http://localhost:5031/#cb3-2" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>Q[<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">exp</span>(pars[<span class="dv">1</span>])</span>
+<span id="cb3-3"><a href="http://localhost:5031/#cb3-3" aria-hidden="true" tabindex="-1"></a>model<span class="sc">$</span>H[<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">exp</span>(pars[<span class="dv">2</span>])</span>
+<span id="cb3-4"><a href="http://localhost:5031/#cb3-4" aria-hidden="true" tabindex="-1"></a>model</span>
+<span id="cb3-5"><a href="http://localhost:5031/#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="http://localhost:5031/#cb3-6" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">fitSSM</span>(modello1, <span class="fu">rep</span>(<span class="fu">log</span>(<span class="fu">var</span>(<span class="fu">diff</span>(Nile))), <span class="dv">2</span>), updt)</span>
+<span id="cb3-7"><a href="http://localhost:5031/#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="http://localhost:5031/#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># We check the convergence of the optimization;</span></span>
+<span id="cb3-9"><a href="http://localhost:5031/#cb3-9" aria-hidden="true" tabindex="-1"></a>fit3<span class="sc">$</span>optim.out<span class="sc">$</span>convergence</span>
+<span id="cb3-10"><a href="http://localhost:5031/#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 0</span></span>
+<span id="cb3-11"><a href="http://localhost:5031/#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="http://localhost:5031/#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="http://localhost:5031/#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># We look at the estimates in the matrices;</span></span>
+<span id="cb3-14"><a href="http://localhost:5031/#cb3-14" aria-hidden="true" tabindex="-1"></a>fit3<span class="sc">$</span>model<span class="sc">$</span>Q</span>
+<span id="cb3-15"><a href="http://localhost:5031/#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="do">## , , 1</span></span>
+<span id="cb3-16"><a href="http://localhost:5031/#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="do">##</span></span>
+<span id="cb3-17"><a href="http://localhost:5031/#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [,1]</span></span>
+<span id="cb3-18"><a href="http://localhost:5031/#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,] 1466.32</span></span>
+<span id="cb3-19"><a href="http://localhost:5031/#cb3-19" aria-hidden="true" tabindex="-1"></a>fit3<span class="sc">$</span>model<span class="sc">$</span>H</span>
+<span id="cb3-20"><a href="http://localhost:5031/#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="do">## , , 1</span></span>
+<span id="cb3-21"><a href="http://localhost:5031/#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">##</span></span>
+<span id="cb3-22"><a href="http://localhost:5031/#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="do">## [,1]</span></span>
+<span id="cb3-23"><a href="http://localhost:5031/#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,] 15098.18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The estimates are indeed almost identical to those obtained with the first method.<br>
+If we want to compute the standard errors of the estimates, we can use the formal argument <code>hessian = TRUE</code>, which will be passed to <code>optim().</code></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="http://localhost:5031/#cb4-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">fitSSM</span>(modello1, <span class="fu">rep</span>(<span class="fu">log</span>(<span class="fu">var</span>(<span class="fu">diff</span>(Nile))), <span class="dv">2</span>), updt, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-2"><a href="http://localhost:5031/#cb4-2" aria-hidden="true" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">solve</span>(fit3<span class="sc">$</span>optim.out<span class="sc">$</span>hessian)</span>
+<span id="cb4-3"><a href="http://localhost:5031/#cb4-3" aria-hidden="true" tabindex="-1"></a>GVG <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">exp</span>(fit3<span class="sc">$</span>optim.out<span class="sc">$</span>par)) <span class="sc">%*%</span> V <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">exp</span>(fit3<span class="sc">$</span>optim.out<span class="sc">$</span>par))</span>
+<span id="cb4-4"><a href="http://localhost:5031/#cb4-4" aria-hidden="true" tabindex="-1"></a>stderr <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(GVG))</span>
+<span id="cb4-5"><a href="http://localhost:5031/#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="at">param =</span> <span class="fu">exp</span>(fit3<span class="sc">$</span>optim.out<span class="sc">$</span>par), <span class="at">stderr=</span>stderr)</span>
+<span id="cb4-6"><a href="http://localhost:5031/#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="http://localhost:5031/#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">##         param    stderr</span></span>
+<span id="cb4-8"><a href="http://localhost:5031/#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]  1466.32  1279.011</span></span>
+<span id="cb4-9"><a href="http://localhost:5031/#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,] 15098.18  3145.357</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+</section>
+<section id="filtering-and-smoothing" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-and-smoothing">Filtering and smoothing<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#filtering-and-smoothing" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h2>
+<p>Once the unknown parameters of the state space model have been estimated, it is natural to use the model to forecast the time series, to perform inference on its components, and finally to diagnose the presence of shocks or structural changes in the series.</p>
+<p>To obtain optimal estimates of the latent components, we use <strong>Kalman smoothing</strong>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="http://localhost:5031/#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I apply the state and disturbance smoother</span></span>
+<span id="cb5-2"><a href="http://localhost:5031/#cb5-2" aria-hidden="true" tabindex="-1"></a>smo1 <span class="ot">&lt;-</span> <span class="fu">KFS</span>(fit1<span class="sc">$</span>model, <span class="at">smoothing =</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"disturbance"</span>))</span>
+<span id="cb5-3"><a href="http://localhost:5031/#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="http://localhost:5031/#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Nile) <span class="co">#Plot of the Nile series</span></span>
+<span id="cb5-5"><a href="http://localhost:5031/#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="http://localhost:5031/#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(smo1<span class="sc">$</span>alphahat[, <span class="dv">1</span>], <span class="at">col =</span> <span class="st">"blue"</span>) </span>
+<span id="cb5-7"><a href="http://localhost:5031/#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the smoothed level</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We also try adding the 90% confidence bands of the smoother.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="http://localhost:5031/#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Nile) </span>
+<span id="cb6-2"><a href="http://localhost:5031/#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="dv">1871</span><span class="sc">:</span><span class="dv">1970</span>, <span class="dv">1970</span><span class="sc">:</span><span class="dv">1871</span>), <span class="fu">c</span>(smo1<span class="sc">$</span>alphahat[, <span class="dv">1</span>]<span class="sc">+</span><span class="fu">qnorm</span>(.<span class="dv">95</span>)<span class="sc">*</span><span class="fu">sqrt</span>(smo1<span class="sc">$</span>V[<span class="dv">1</span>, <span class="dv">1</span>, ]), <span class="fu">rev</span>(smo1<span class="sc">$</span>alphahat[, <span class="dv">1</span>]<span class="sc">-</span><span class="fu">qnorm</span>(.<span class="dv">95</span>)<span class="sc">*</span><span class="fu">sqrt</span>(smo1<span class="sc">$</span>V[<span class="dv">1</span>, <span class="dv">1</span>, ]))),</span>
+<span id="cb6-3"><a href="http://localhost:5031/#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">col =</span> <span class="st">"lightblue"</span>, <span class="at">border =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-4"><a href="http://localhost:5031/#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(Nile) </span>
+<span id="cb6-5"><a href="http://localhost:5031/#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(smo1<span class="sc">$</span>alphahat[, <span class="dv">1</span>], <span class="at">col =</span> <span class="st">"blue"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./State Space Model Analysis Using KFAS_files/Screenshot 2025-08-11 alle 11.04.26.png" class="img-fluid"></p>
+<p>We use the standardized residuals to check for any extreme shocks in the disturbances of the random walk (these cause abrupt permanent level changes).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="http://localhost:5031/#cb7-1" aria-hidden="true" tabindex="-1"></a>auxres1 <span class="ot">&lt;-</span> <span class="fu">rstandard</span>(smo1, <span class="at">type =</span> <span class="st">"state"</span>) </span>
+<span id="cb7-2"><a href="http://localhost:5031/#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute auxiliary residuals</span></span>
+<span id="cb7-3"><a href="http://localhost:5031/#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="http://localhost:5031/#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(auxres1) </span>
+<span id="cb7-5"><a href="http://localhost:5031/#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot auxiliary residuals</span></span>
+<span id="cb7-6"><a href="http://localhost:5031/#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="http://localhost:5031/#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fu">c</span>(<span class="fu">qnorm</span>(<span class="fl">0.005</span>), <span class="fu">qnorm</span>(<span class="fl">0.995</span>)), <span class="at">lty =</span> <span class="dv">2</span>) <span class="co"># Bands at 1%</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./State Space Model Analysis Using KFAS_files/Screenshot 2025-08-11 alle 11.10.25.png" class="img-fluid"></p>
+<p>Sembra che verso la fine del secolo XIX vi sia un repentino salto verso il basso.&nbsp;</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="http://localhost:5031/#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">time</span>(auxres1)[<span class="fu">which.min</span>(auxres1)]</span>
+<span id="cb8-2"><a href="http://localhost:5031/#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1898</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It appears that towards the end of the 19th century there is a sudden downward jump.<br>
+The most extreme value is that of 1898, which appears in the time series in 1899.<br>
+Indeed, recall that KFAS uses the form <span class="math inline"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="2" style="font-size: 119.1%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msub><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D707 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" texclass="ORD"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-msub space="4"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D707 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-msub space="3"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D702 TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mi class="mjx-i" size="s"><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>μ</mi><mrow data-mjx-texclass="ORD"><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>μ</mi><mi>t</mi></msub><mo>+</mo><msub><mi>η</mi><mi>t</mi></msub></math></mjx-assistive-mml></mjx-container></span> so a shock at time t manifests in μ, and thus in y, at time t+1 .</p>
+<p>We can modify the model by introducing a regressor to represent a jump in the level at time t=1899 .</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="http://localhost:5031/#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="http://localhost:5031/#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Creation of a step (dummy) variable</span></span>
+<span id="cb9-3"><a href="http://localhost:5031/#cb9-3" aria-hidden="true" tabindex="-1"></a>step <span class="ot">&lt;-</span> Nile</span>
+<span id="cb9-4"><a href="http://localhost:5031/#cb9-4" aria-hidden="true" tabindex="-1"></a>step[] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb9-5"><a href="http://localhost:5031/#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">window</span>(step, <span class="at">start =</span> <span class="dv">1899</span>) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb9-6"><a href="http://localhost:5031/#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Creation of the state space form and estimation</span></span>
+<span id="cb9-7"><a href="http://localhost:5031/#cb9-7" aria-hidden="true" tabindex="-1"></a>modello2 <span class="ot">&lt;-</span> <span class="fu">SSModel</span>(Nile<span class="sc">~</span><span class="dv">0</span><span class="sc">+</span>step<span class="sc">+</span><span class="fu">SSMtrend</span>(<span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">H =</span> <span class="cn">NA</span>)</span>
+<span id="cb9-8"><a href="http://localhost:5031/#cb9-8" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">fitSSM</span>(modello2, <span class="fu">rep</span>(<span class="fu">log</span>(<span class="fu">var</span>(<span class="fu">diff</span>(Nile))), <span class="dv">2</span>))</span>
+<span id="cb9-9"><a href="http://localhost:5031/#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Convergence code ="</span>,fit2<span class="sc">$</span>optim.out<span class="sc">$</span>convergence)</span>
+<span id="cb9-10"><a href="http://localhost:5031/#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Convergence code = 0</span></span>
+<span id="cb9-11"><a href="http://localhost:5031/#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">exp</span>(fit2<span class="sc">$</span>optim.out<span class="sc">$</span>par), <span class="dv">3</span>)</span>
+<span id="cb9-12"><a href="http://localhost:5031/#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.001 16302.228</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The variance of the random walk disturbance is now zero, so the level remains constant.<br>
+It appears that the abrupt level change in 1899 absorbs all movements of the level component.<br>
+The remaining variance is due to observation noise.</p>
+<p>We now test, using a t-statistic, whether the level change in 1899 is statistically zero.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="http://localhost:5031/#cb10-1" aria-hidden="true" tabindex="-1"></a>smo2 <span class="ot">&lt;-</span> <span class="fu">KFS</span>(fit2<span class="sc">$</span>model, <span class="at">smoothing =</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"disturbance"</span>, <span class="st">"signal"</span>,<span class="st">"mean"</span>))</span>
+<span id="cb10-2"><a href="http://localhost:5031/#cb10-2" aria-hidden="true" tabindex="-1"></a>ttest <span class="ot">&lt;-</span> smo2<span class="sc">$</span>alphahat[<span class="fu">length</span>(Nile), <span class="dv">1</span>] <span class="sc">/</span> <span class="fu">sqrt</span>(smo2<span class="sc">$</span>V[<span class="dv">1</span>, <span class="dv">1</span>, <span class="fu">length</span>(Nile)])</span>
+<span id="cb10-3"><a href="http://localhost:5031/#cb10-3" aria-hidden="true" tabindex="-1"></a>pvalue <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(ttest))<span class="sc">*</span><span class="dv">2</span></span>
+<span id="cb10-4"><a href="http://localhost:5031/#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">rbind</span>(<span class="at">tstat=</span>ttest, <span class="at">pvalue=</span>pvalue), <span class="dv">4</span>)</span>
+<span id="cb10-5"><a href="http://localhost:5031/#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="http://localhost:5031/#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">## step</span></span>
+<span id="cb10-7"><a href="http://localhost:5031/#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">## tstat -8.7132</span></span>
+<span id="cb10-8"><a href="http://localhost:5031/#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">## pvalue 0.0000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The jump is significant at any usual level.<br>
+We now overlay the plot of the Nile series with the sum of the level and coefficient * step.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="http://localhost:5031/#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I create the variable coeff_step * step + level</span></span>
+<span id="cb11-2"><a href="http://localhost:5031/#cb11-2" aria-hidden="true" tabindex="-1"></a>lvl_jump <span class="ot">&lt;-</span> smo2<span class="sc">$</span>alphahat[, <span class="st">"step"</span>]<span class="sc">*</span>step <span class="sc">+</span> smo2<span class="sc">$</span>alphahat[, <span class="st">"level"</span>]</span>
+<span id="cb11-3"><a href="http://localhost:5031/#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Nile)</span>
+<span id="cb11-4"><a href="http://localhost:5031/#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(<span class="dv">1871</span><span class="sc">:</span><span class="dv">1970</span>, <span class="dv">1970</span><span class="sc">:</span><span class="dv">1871</span>), <span class="fu">c</span>(lvl_jump <span class="sc">+</span> <span class="fu">qnorm</span>(.<span class="dv">95</span>)<span class="sc">*</span><span class="fu">sqrt</span>(smo2<span class="sc">$</span>V[<span class="dv">2</span>, <span class="dv">2</span>, ]), <span class="fu">rev</span>(lvl_jump <span class="sc">-</span> <span class="fu">qnorm</span>(.<span class="dv">95</span>)<span class="sc">*</span><span class="fu">sqrt</span>(smo2<span class="sc">$</span>V[<span class="dv">2</span>, <span class="dv">2</span>, ]))),</span>
+<span id="cb11-5"><a href="http://localhost:5031/#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">col =</span> <span class="st">"lightblue"</span>, <span class="at">border =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-6"><a href="http://localhost:5031/#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(lvl_jump, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb11-7"><a href="http://localhost:5031/#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(Nile)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./State Space Model Analysis Using KFAS_files/Screenshot 2025-08-11 alle 11.22.38.png" class="img-fluid"></p>
+<p>The plot clearly shows the regime change from 1899 onwards.</p>
+<p>Let’s now examine the auxiliary residuals of the level in this model.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="http://localhost:5031/#cb12-1" aria-hidden="true" tabindex="-1"></a>auxres2 <span class="ot">&lt;-</span> <span class="fu">rstandard</span>(smo2, <span class="at">type =</span> <span class="st">"state"</span>)</span>
+<span id="cb12-2"><a href="http://localhost:5031/#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(auxres2)</span>
+<span id="cb12-3"><a href="http://localhost:5031/#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>)), <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./State Space Model Analysis Using KFAS_files/Screenshot 2025-08-11 alle 11.24.29.png" class="img-fluid"></p>
+<p>There are now no disturbances exceeding the threshold values we set (−2.58, 2.58), i.e., values in the 1% tails.<br>
+The step-change model captures the level dynamics well.</p>
+<p>Using the standardized observation error residuals, we can also identify possible additive outliers.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="http://localhost:5031/#cb13-1" aria-hidden="true" tabindex="-1"></a>auxres2eps <span class="ot">&lt;-</span> <span class="fu">rstandard</span>(smo2, <span class="at">type =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb13-2"><a href="http://localhost:5031/#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(auxres2eps)</span>
+<span id="cb13-3"><a href="http://localhost:5031/#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>)), <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./State Space Model Analysis Using KFAS_files/Screenshot 2025-08-11 alle 11.28.15.png" class="img-fluid"></p>
+<p>There is only one value that exceeds the 99% confidence bands.<br>
+However, since there are 100 auxiliary residuals, this result is expected (under the null hypothesis that the auxiliary residuals are standard normal, on average one value out of 100 will exceed the 99% confidence bands).</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#conclusions" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h2>
+<p>The analysis carried out on the annual flow data of the Nile using state space models made it possible to capture important aspects of the series’ dynamics and to improve the understanding of its latent components.<br>
+In particular, through estimation with the KFAS package and the application of the Kalman filter and smoother, the following conclusions were drawn:</p>
+<section id="adequacy-of-the-local-level-model-with-observation-noise" class="level3">
+<h3 class="anchored" data-anchor-id="adequacy-of-the-local-level-model-with-observation-noise">1. Adequacy of the local level model with observation noise<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#adequacy-of-the-local-level-model-with-observation-noise" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h3>
+<p>The initial model, a random walk with additive white noise, proved capable of representing the time series in a general sense, separating a latent level component that evolves over time from an observation noise component.<br>
+The variance estimates obtained via maximum likelihood reflect strong variability both in the level dynamics and in the observation noise.</p>
+<p>However, the analysis of the standardized state residuals revealed a significant anomaly: a sudden and marked shock at the end of the 19th century (around 1899) that the basic model could not explain gradually.<br>
+This results in an extreme residual beyond the significance thresholds, indicating a structural change.</p>
+</section>
+<section id="identification-and-modeling-of-the-structural-change-in-1899" class="level3">
+<h3 class="anchored" data-anchor-id="identification-and-modeling-of-the-structural-change-in-1899">2. Identification and modeling of the structural change in 1899<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#identification-and-modeling-of-the-structural-change-in-1899" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h3>
+<p>To account for this evidence, a dummy variable (step) was introduced to trigger a permanent change in the series level starting in 1899.<br>
+This approach allows us to explicitly model a regime change: a sharp jump in the level that is no longer interpreted as a simple temporary shock but as a stable modification of the system.</p>
+<p>The inclusion of this regressor resulted in a more parsimonious and interpretable model, where the variance of the random walk disturbance becomes negligible — indicating that the level dynamics are essentially constant after the jump — and the remaining variability is mainly attributable to observation noise.</p>
+</section>
+<section id="statistical-significance-and-practical-implications" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-significance-and-practical-implications">3. Statistical significance and practical implications<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#statistical-significance-and-practical-implications" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h3>
+<p>The t-test on the coefficient associated with the jump confirmed the statistical significance of the level change, with a p-value that is virtually zero.<br>
+This indicates with high statistical confidence that the 1899 event caused a structural break in the Nile’s regime, presumably linked to long-term natural, climatic, or anthropogenic phenomena.</p>
+<p>This result highlights the importance of including components in models that can capture exceptional events and regime changes, which are essential for an accurate representation and forecasting of the series.</p>
+</section>
+<section id="diagnostic-validation-and-quality-of-the-improved-model" class="level3">
+<h3 class="anchored" data-anchor-id="diagnostic-validation-and-quality-of-the-improved-model">4. Diagnostic validation and quality of the improved model<a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="http://localhost:5031/#diagnostic-validation-and-quality-of-the-improved-model" style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; padding-right: 0.1875em; padding-left: 0.1875em;"></a></h3>
+<p>The analysis of standardized auxiliary residuals, both state and observation, showed that in the step-change model:</p>
+<ul>
+<li><p>No extreme state residuals are observed, suggesting that all significant level variations have been adequately modeled.</p></li>
+<li><p>Observation residuals are consistent with the hypothesis of normal white noise, with only a few outliers expected given the sample size.</p></li>
+</ul>
+<p>This final diagnostic confirms that the model with a structural jump is well-calibrated and better suited to represent the dynamics of the time series.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+
+<script>window.backupDefine = window.define; window.define = undefined;</script>
+<script type="text/javascript" src="./State Space Model Analysis Using KFAS_files/quarto-preview.js"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+<script type="text/javascript">
+  const options = {
+    origin: "",
+    search: "",
+    inputFile: "/Users/annalisaori/Downloads/Statesapce.qmd",
+    isPresentation: false
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    window.QuartoPreview.init(options);
+  });
+</script>
+<div><div dir="ltr" class="fui-FluentProvider fui-FluentProviderr0 ___jdtuxv0 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"></div></div><i tabindex="0" role="none" data-tabster-dummy="" aria-hidden="true" style="position: fixed; height: 1px; width: 1px; opacity: 0.001; z-index: -1; content-visibility: hidden; top: 0px; left: 0px;"></i></body></html>
